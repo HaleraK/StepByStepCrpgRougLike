@@ -1,0 +1,14 @@
+[gd_scene load_steps=4 format=3 uid="uid://7wg3y21kqrfq"]
+
+[ext_resource type="Texture2D" uid="uid://bjs1153r1x8lw" path="res://characters/unique/paladin/paladin3.png" id="1_apbax"]
+[ext_resource type="Script" path="res://characters/unique/paladin/Paladin.cs" id="1_u0p17"]
+[ext_resource type="PackedScene" uid="uid://bmbfiva5ul8v6" path="res://characters/character.tscn" id="2_sj0jd"]
+
+[node name="Paladin" type="Sprite2D"]
+position = Vector2(229, 267)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("1_apbax")
+script = ExtResource("1_u0p17")
+
+[node name="Character" parent="." instance=ExtResource("2_sj0jd")]
+position = Vector2(120, 1290)

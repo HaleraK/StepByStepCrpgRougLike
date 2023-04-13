@@ -1,0 +1,9 @@
+[gd_scene load_steps=2 format=3 uid="uid://dc6ubyq5aptxr"]
+
+[ext_resource type="Script" path="res://Locations/fight/Point.cs" id="1_sg7ki"]
+
+[node name="Point" type="Marker2D"]
+editor_description = "Type can be
+	char
+    mob"
+script = ExtResource("1_sg7ki")

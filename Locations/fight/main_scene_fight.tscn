@@ -1,0 +1,48 @@
+[gd_scene load_steps=2 format=3 uid="uid://dt7v8ws8ue2lh"]
+
+[ext_resource type="PackedScene" uid="uid://dc6ubyq5aptxr" path="res://Locations/fight/point.tscn" id="1_4wcwk"]
+
+[node name="MainSceneFight" type="Node2D"]
+
+[node name="ConteinerChars" type="Node" parent="."]
+
+[node name="Point" parent="ConteinerChars" instance=ExtResource("1_4wcwk")]
+position = Vector2(419, 349)
+
+[node name="Point2" parent="ConteinerChars" instance=ExtResource("1_4wcwk")]
+position = Vector2(419, 349)
+
+[node name="Point3" parent="ConteinerChars" instance=ExtResource("1_4wcwk")]
+position = Vector2(419, 349)
+
+[node name="Point4" parent="ConteinerChars" instance=ExtResource("1_4wcwk")]
+position = Vector2(419, 349)
+
+[node name="Point5" parent="ConteinerChars" instance=ExtResource("1_4wcwk")]
+position = Vector2(419, 349)
+
+[node name="ConteinerMobs" type="Node" parent="."]
+
+[node name="Point" parent="ConteinerMobs" instance=ExtResource("1_4wcwk")]
+position = Vector2(419, 349)
+
+[node name="Point2" parent="ConteinerMobs" instance=ExtResource("1_4wcwk")]
+position = Vector2(419, 349)
+
+[node name="Point3" parent="ConteinerMobs" instance=ExtResource("1_4wcwk")]
+position = Vector2(419, 349)
+
+[node name="Point4" parent="ConteinerMobs" instance=ExtResource("1_4wcwk")]
+position = Vector2(419, 349)
+
+[node name="Point5" parent="ConteinerMobs" instance=ExtResource("1_4wcwk")]
+position = Vector2(419, 349)
+
+[node name="Point6" parent="ConteinerMobs" instance=ExtResource("1_4wcwk")]
+position = Vector2(419, 349)
+
+[node name="Point7" parent="ConteinerMobs" instance=ExtResource("1_4wcwk")]
+position = Vector2(419, 349)
+
+[node name="Point8" parent="ConteinerMobs" instance=ExtResource("1_4wcwk")]
+position = Vector2(419, 349)

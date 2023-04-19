@@ -1,50 +1,119 @@
-using Godot;
+Ôªøusing Godot;
 using System;
 
-public partial class Character : Sprite2D
+public partial class Character : Node2D
 {
-	[Export] private int _hp = 100;
-    [Export] private int _hpMax = 100; //ËÏÂÂÚ ÒÏ˚ÒÎ Ò‰ÂÎ‡Ú¸ Ï‡ÒÒË‚ Ò
-									   //Ï‡ÍÒËÏ‡Î¸Ì˚ÏË ÁÌ‡˜ÂÌËˇÏË Á‡‚ËÒËÏ˚Ï ÓÚ ÛÓ‚Ìˇ
+    [Export] private float _hp = 80;
+    private float _hpCurrent = 80;
+    [Export] private float _hpMax = 100; //–∏–º–µ–µ—Ç —Å–º—ã—Å–ª —Å–¥–µ–ª–∞—Ç—å –º–∞—Å—Å–∏–≤ —Å
+                                       //–º–∞–∫—Å–∏–º–∞–ª—å–Ω—ã–º–∏ –∑–Ω–∞—á–µ–Ω–∏—è–º–∏ –∑–∞–≤–∏—Å–∏–º—ã–º –æ—Ç —É—Ä–æ–≤–Ω—è
 
-    [Export] private int _mana = 100;
-	[Export] private int _manaMax = 100;
+    [Export] private float _mana = 100;
+    [Export] private float _manaMax = 100;
 
-	[Export] private int _armor = 10;
-	[Export] private int _armorMax = 10;
+    [Export] private float _armor = 10;
+    [Export] private float _armorMax = 10;
 
-	[Export] private int _atk = 10;
-    [Export] private int _atkMax = 10;
+    [Export] private float _atk = 10;
+    [Export] private float _atkMax = 10;
 
-    [Export] private int _initiative = 10;
-	[Export] private int _critRate = 0;
-	[Export] private int _critAtk = 140;
-	[Export] private int _lvl = 1;
+    [Export] private float _initiative = 8;
+    private float _initiativeCurrent = 0;
+    [Export] private float _initiativeMax = 100;
+    [Export] private float _critRate = 0;
+    [Export] private float _critAtk = 140;
+    [Export] private int _lvl = 1;
+
+    [Export] private string _type = "";
+    private static readonly string[] POSIBLE_TYPES = { "character", "mob", "npc" };
+
+    [Export] private string _name = "";
+    private static readonly string[] POSIBLE_NAMES = { "Paladin", "Slime"};
+
+    private string[] _nodes = { "Hp", "HpBase", "Init", "InitBase", "ArmorText" };
+
+
+    private int _pointsForActive;
+    private int _pointsForPassive;
+    private int _pointsForStats;
 
     private const int LVLMAX = 10;
 
-    private int _expirence = 0;
-	private int[] _countExpForLVL;
+    private int _exp = 0;
+    private int[] _countExpForLVL;
 
-	private string _slots;
-    // Called when the node enters the scene tree for the first time.
-	public void TakeDamage(int gamage)
-	{
+    private string _slots;
 
-	}
-
-	public int GiveDamage()
-	{
-		int damage = 0;
-		return damage;
-
-	}
     public override void _Ready()
-	{
-	}
+    {
+        //Position = new Vector2(300, 300);
+        UnHideNode();
+        SetCharUiPos();
+    }
 
-	// Called every frame. 'delta' is the elapsed time since the previous frame.
-	public override void _Process(double delta)
-	{
-	}
+    public override void _Process(double delta)
+    {
+        Initiative(delta);
+
+        switch (_name)
+        {
+            case "Paladin":
+                PaladinControler();
+                break;
+            case "Slime":
+                SlimeControler();
+                break;
+        }
+    }
+
+    public void SetCharUiPos()
+    {
+        GetNode("InitBase").Call("SetPosition");
+        GetNode("Init").Call("SetPosition");
+        GetNode("HpBase").Call("SetPosition");
+        GetNode("Hp").Call("SetPosition");
+        GetNode("ArmorText").Call("SetPosition");
+    }
+
+    public void UnHideNode()
+    {
+        var node = GetNode(_name);
+        node.Call("TougleVisible");
+    }
+
+    public void Initiative(double delta)
+    {
+        _initiativeCurrent += _initiative * (float)delta;
+        if(_initiativeCurrent >= _initiativeMax)
+        {
+            _initiativeCurrent = 0;
+        }
+        GetNode("Init").Call("SetSizeX");
+        //GD.Print(_initiativeCurrent);
+    }
+
+    public void TakeDamage(int gamage)
+    {
+
+    }
+
+    public int GiveDamage()
+    {
+        int damage = 0;
+        return damage;
+
+    }
+
+    public void PaladinControler()
+    {
+
+    }
+
+    public void SlimeControler()
+    {
+
+    }
+
+    // —Å—Ç–∞—Ç—ã –º–æ–∂–Ω–æ –±—É–¥–µ—Ç —É–ª—É—á—à–∞—Ç—å —Å –ø–æ–º–æ—â—å—é –ø–æ–∏–Ω—Ç–æ–≤
+    // –º–æ–∂–Ω–æ —É–ª—É—á—à–∞—Ç—å hp mana armor atk initiative critRate critAtk
 }

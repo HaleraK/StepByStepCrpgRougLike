@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://cpfk148w0tj1j"]
+
+[ext_resource type="Script" path="res://characters/control/TreeSkill.cs" id="1_2nb2d"]
+
+[node name="TreeSkill" type="Node"]
+script = ExtResource("1_2nb2d")

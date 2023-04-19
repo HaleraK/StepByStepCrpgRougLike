@@ -1,253 +1,365 @@
 using Godot;
 using System;
 
-public partial class Paladin : Sprite2D
+public partial class Paladin : Area2D
 {
-    private string[] _allActiveAbillities;
-    private string[] _chosenActiveAbillities;
+	private TreeSkills[] _actives = new TreeSkills[14];
+	private TreeSkills[] _passives = new TreeSkills[9];
+	private TreeSkills[] _auras = new TreeSkills[4];
 
-    private string[] _allPassiveAbillities;
-    private string[] _chosenPassiveAbillities;
+	private LevelTable[] _lvlTable = new LevelTable[11];
 
-    public override void _Ready()
+	private string _currentAura;
+
+	class Slot
 	{
+		private string _type;
+		private static readonly string[] POSIBLE_TYPES 
+			= {"head", "body"};
+		private string _name;
+		private const int MAX_ARTS = 8;
+
+	}
+
+	class TreeSkills
+	{
+		private string _name;
+		private bool _learned = false;
+		private string _requiered;
+		private string _description;
+
+		public TreeSkills(string name, bool learned, string requiered)
+		{
+			_name = name;
+			_learned = learned;
+			_requiered = requiered;
+		}
+		public TreeSkills(string name, bool learned)
+		{
+			_name = name;
+			_learned = learned;
+			_requiered = "";
+		}
+	}
+
+	class LevelTable
+	{
+		private int _lvl;
+		private int _exp;
+		private int _pointsForActive;
+		private int _pointsForPassive;
+		private int _pointsForStats;
+
+		public LevelTable(int lvl, int exp, int pointsForActive, int pointsForPassive, int pointsForStats)
+		{
+			_lvl = lvl;
+			_exp = exp;
+			_pointsForActive = pointsForActive;
+			_pointsForPassive = pointsForPassive;
+			// СЃС‚Р°С‚С‹ РјРѕР¶РЅРѕ Р±СѓРґРµС‚ СѓР»СѓС‡С€Р°С‚СЊ СЃ РїРѕРјРѕС‰СЊСЋ РїРѕРёРЅС‚РѕРІ
+			// РјРѕР¶РЅРѕ СѓР»СѓС‡С€Р°С‚СЊ hp mana armor atk initiative critRate critAtk
+			_pointsForStats = pointsForStats;
+		}
+	}
+
+	public override void _Ready()
+	{
+		_actives[0] = new TreeSkills("NormalAttack", true);
+
+		_actives[1] = new TreeSkills("TripleJutice", false, "NormalAttack");
+		_actives[2] = new TreeSkills("DivineIntervention", false, "TripleJutice");
+		_actives[3] = new TreeSkills("KnightAttack", false, "DivineIntervention");
+
+		_actives[4] = new TreeSkills("HealLight", false, "NormalAttack");
+		_actives[5] = new TreeSkills("ResistanceSpirit", false, "HealLight");
+		_actives[6] = new TreeSkills("Recovery", false, "ResistanceSpirit");
+
+		_actives[7] = new TreeSkills("DivineDefense", false, "NormalAttack");
+		_actives[8] = new TreeSkills("DivineShield", false, "DivineDefense");
+		_actives[9] = new TreeSkills("DefenceKnight", false, "DivineShield");
+
+		_actives[10] = new TreeSkills("Entreaty", false, "NormalAttack");
+		_actives[11] = new TreeSkills("Challenge", false, "NormalAttack");
+
+		_actives[12] = new TreeSkills("ChangeAura", false, "NormalAttack");
+		_actives[13] = new TreeSkills("StrengtheningAura", false, "ChangeAura");
+
+
+		_passives[0] = new TreeSkills("IncreaseArmor", false);
+		_passives[1] = new TreeSkills("IncreaseHeal", false);
+		_passives[2] = new TreeSkills("IncreaseDamage", false);
+		_passives[3] = new TreeSkills("DivinieSpeed", false);
+
+		_passives[4] = new TreeSkills("MagicArmor", false, "IncreaseArmor");
+		_passives[5] = new TreeSkills("DivineProtection", false, "MagicArmor");
+
+		_passives[6] = new TreeSkills("HolyHits", false);
+		_passives[7] = new TreeSkills("Fearless", false, "DivinieSpeedd");
+		_passives[8] = new TreeSkills("LightsPower", false, "IncreaseDamage");
+
+
+		_auras[0] = new TreeSkills("AuraAttack", false);
+		_auras[1] = new TreeSkills("AuraDefence", false);
+		_auras[2] = new TreeSkills("AuraHeal", false);
+		_auras[3] = new TreeSkills("AuraSpeed", false);
+
+		int m = 100;
+
+		_lvlTable[0] = new LevelTable(0, 0, 0, 0, 0);
+		_lvlTable[1] = new LevelTable(1, m, 1, 0, 1);
+		_lvlTable[2] = new LevelTable(2, m * 3, 1, 1, 1);
+		_lvlTable[3] = new LevelTable(3, m * 3, 1, 0, 1);
+		_lvlTable[4] = new LevelTable(4, m * 3, 1, 0, 2);
+		_lvlTable[5] = new LevelTable(5, m * 3, 1, 1, 2);
+		_lvlTable[6] = new LevelTable(6, m * 3, 1, 0, 2);
+		_lvlTable[7] = new LevelTable(7, m * 3, 1, 0, 3);
+		_lvlTable[8] = new LevelTable(8, m * 3, 1, 2, 3);
+		_lvlTable[9] = new LevelTable(9, m * 3, 1, 0, 4);
+		_lvlTable[10] = new LevelTable(10, m * 3, 1, 2, 6);
 	}
 
 	public override void _Process(double delta)
 	{
 	}
 
-    //АКТИВИ (1 + 13)
-    //обычная атака всегда доступна
-    //Всего доступно 12 абилок
-    //За каждый уровень можно 1 абилку
-    //На 10 уровне даються все оставшиися абилки
-    //сняражать в бой можно 4 абилки не считая обычной атаки
+	public void TougleVisible()
+	{
+		Visible = !Visible;
+	}
 
-	//Удар света
-	//обычная атака 100% атаки
-	public void NormalAttack()
+	//РђРљРўРР’Р (1 + 13)
+	//РѕР±С‹С‡РЅР°СЏ Р°С‚Р°РєР° РІСЃРµРіРґР° РґРѕСЃС‚СѓРїРЅР°
+	//Р’СЃРµРіРѕ РґРѕСЃС‚СѓРїРЅРѕ 12 Р°Р±РёР»РѕРє
+	//Р—Р° РєР°Р¶РґС‹Р№ СѓСЂРѕРІРµРЅСЊ РјРѕР¶РЅРѕ 1 Р°Р±РёР»РєСѓ
+	//РќР° 10 СѓСЂРѕРІРЅРµ РґР°СЋС‚СЊСЃСЏ РІСЃРµ РѕСЃС‚Р°РІС€РёРёСЃСЏ Р°Р±РёР»РєРё
+	//СЃРЅСЏСЂР°Р¶Р°С‚СЊ РІ Р±РѕР№ РјРѕР¶РЅРѕ 4 Р°Р±РёР»РєРё РЅРµ СЃС‡РёС‚Р°СЏ РѕР±С‹С‡РЅРѕР№ Р°С‚Р°РєРё
+
+	//РЈРґР°СЂ СЃРІРµС‚Р°
+	//РѕР±С‹С‡РЅР°СЏ Р°С‚Р°РєР° 100% Р°С‚Р°РєРё
+	public float NormalAttack()
+	{
+		float dammage = 0;
+		dammage += (float)GetNode(".").Get("_atk");
+		return dammage;
+	}
+
+	//РўСЂРѕР№РЅРѕРµ РїСЂР°РІРѕСЃСѓРґРёРµ
+	//3 Р°С‚Р°РєРё СЃРѕ 80% СЃРёР»С‹
+	//РѕС‚РєР°С‚ 3 С…РѕРґР°
+	public void TripleJutice()
 	{
 
 	}
 
-    //Тройное правосудие
-    //3 атаки со 80% силы
-    //откат 3 хода
-    public void TripleJutice()
-    {
+	//Р‘РѕР¶РµСЃС‚РІРµРЅРЅРѕРµ РІРјРµС€Р°С‚РµР»СЊСЃС‚РІРѕ
+	//Р›СѓС‡ СЃРІРµС‚Р° РєРѕС‚РѕСЂС‹Р№ Р±СЊРµС‚ Р»СЋР±СѓСЋ С†РµР»СЊ 150% СЃРёР»С‹
+	//РјР°РЅР° 30%
+	public void DivineIntervention()
+	{
 
-    }
+	}
 
-    //Божественное вмешательство
-    //Луч света который бьет любую цель 150% силы
-    //мана 30%
-    public void DivineIntervention()
-    {
+	//РђС‚Р°РєР° РєРѕСЂРѕР»СЏ
+	//Р’С‹ РєРёРґР°РµС‚Рµ РјРѕР»РѕС‚ РїРѕ С†РµР»Рё, Сѓ РєРѕС‚РѕСЂРѕР№ РѕСЃС‚Р°Р»РѕСЃСЊ 25% С…Рї
+	//РјР°РЅР° 20%
+	public void KnightAttack()
+	{
 
-    }
+	}
 
-    //Атака короля
-    //Вы кидаете молот по цели, у которой осталось 25% хп
-    //мана 20%
-    public void KnightAttack()
-    {
+	//----
 
-    }
+	//Р›РµС‡РµРЅРёРµ СЃРІРµС‚Р°
+	//С…РёР» Р»СЋР±РѕРіРѕ СЃРѕСЋР·РЅРёРєР°
+	//РјР°РЅР° 20%
+	public void HealLight()
+	{
 
-    //----
+	}
 
-    //Лечение света
-    //хил любого союзника
-    //мана 20%
-    public void HealLight()
-    {
+	//РЎС‚РѕР№РєРѕСЃС‚СЊ РґСѓС…Р°
+	//РјР°СЃСЃРѕРІРѕРµ Р»РµС‡РµРЅРёРµ
+	//РјР°РЅР° 60%
+	//РѕС‚РєР°С‚ 3 С…РѕРґР°
+	public void ResistanceSpirit()
+	{
 
-    }
+	}
 
-    //Стойкость духа
-    //массовое лечение
-    //мана 60%
-    //откат 3 хода
-    public void ResistanceSpirit()
-    {
+	//РњРѕР»СЊР±Р°
+	//РІС‹ РІРѕСЃС‚РѕРЅР°РІР»РёРІР°РµС‚Рµ 60% РјР°РЅРЅС‹ Рё 30% С…Рї
+	//РѕС‚РєР°С‚ 4 С…РѕРґР°
+	public void Entreaty()
+	{
 
-    }
+	}
 
-    //Мольба
-    //вы востонавливаете 60% манны и 30% хп
-    //откат 4 хода
-    public void Entreaty()
-    {
+	//Р’РѕСЃС‚РѕРЅРѕРІР»РµРЅРёРµ
+	//РћР¶РёРІР»СЏРµС‚ РЅРµРґР°РІРЅРѕ РїР°РґС€РµРіРѕ СЃРѕСЋР·РЅРёРєР° СЃ 50% С…Рї
+	//РјР°РЅР° 60% РѕС‚РєР°С‚ 4 С…РѕРґР°
+	public void Recovery()
+	{
 
-    }
+	}
 
-    //Востоновление
-    //Оживляет недавно падшего союзника с 50% хп
-    //мана 60% откат 4 хода
-    public void KnightAttack1()
-    {
+	//----
 
-    }
+	//Р‘РѕР¶РµСЃС‚РІРµРЅРЅР°СЏ Р·Р°С‰РёС‚Р°
+	//СѓРІРµР»РёС‡РµРЅРёРµ Р·Р°С‰РёС‚С‹ РґРѕ 200% РґРѕ СЃР»РµРґСѓСЋС‰РµРіРѕ С…РѕРґР°
+	//РјР°РЅР° 20%
+	public void DivineDefense()
+	{
 
-    //----
+	}
 
-    //Божественная защита
-    //увеличение защиты до 200% до следующего хода
-    //мана 20%
-    public void DivineDefense()
-    {
+	//Р‘РѕР¶РµСЃС‚РІРµРЅРЅС‹Р№ С‰РёС‚
+	//РЅР° 1 С…РѕРґ РЅРµ РїРѕР»СѓС‡Р°РµС‚Рµ СѓСЂРѕРЅ
+	//РјР°РЅР° 30% РѕС‚РєР°С‚ 3 С…РѕРґР°
+	public void DivineShield()
+	{
 
-    }
+	}
 
-    //Божественный щит
-    //на 1 ход не получаете урон
-    //мана 30% откат 3 хода
-    public void DivineShield()
-    {
+	//Р—Р°С‰РёС‚Р° РєРѕСЂРѕР»РµР№
+	//СѓРІРµР»РёС‡РёРІР°РµС‚ Р·Р°С‰РёС‚Сѓ РґРѕ 500% Рё С‚Р°СЂРіРµС‚РёС‚ РІСЂР°РіРѕРІ РЅР° СЃРµР±СЏ РЅР° 3 С…РѕРґР°
+	//РјР°РЅР° 60%
+	//РѕС‚РєР°С‚ 3 С…РѕРґР°
+	public void DefenceKnight()
+	{
 
-    }
+	}
 
-    //Защита королей
-    //увеличивает защиту до 500% и таргетит врагов на себя на 3 хода
-    //мана 60%
-    //откат 3 хода
-    public void DefenceKnight()
-    {
+	//----
 
-    }
+	//Р’С‹Р·РѕРІ
+	//Р’С‹ РЅР°РєР»Р°РґС‹РІР°РµС‚Рµ РЅР° РІСЂР°РіР° СЌРІРІРµРєС‚
+	//СѓРІРµР»РёС‡РёРІР°РµС‚ СѓСЂРѕРЅ РїРѕ РІСЂР°РіСѓ РЅР° 150% (РґР»СЏ РІСЃРµС…) Рё Р·Р°С‰РёС‚Сѓ РѕС‚ РЅРµРіРѕ РЅР° 150%
+	//РјР°РЅР° 30% РѕС‚РєР°С‚ 3 С…РѕРґР°
+	public void Challenge()
+	{
 
-    //----
+	}
 
-    //Вызов
-    //Вы накладываете на врага эввект
-    //увеличивает урон по врагу на 150% (для всех) и защиту от него на 150%
-    //мана 30% откат 3 хода
-    public void Challenge()
-    {
+	//РЎРјРµРЅР° Р°СѓСЂС‹
+	//РІС‹ РјРµРЅСЏРµС‚Рµ Р°СѓСЂСѓ
+	//РјР°РЅР° 20%
+	public void ChangeAura(string aura)
+	{
+		_currentAura = aura;
+	}
 
-    }
+	//Р‘РѕР¶РµСЃС‚РІРµРЅРЅРѕРµ СѓСЃРёР»РµРЅРёРµ Р°СѓСЂС‹
+	//СѓСЃРёР»РµРЅРёРµ Р°СѓСЂС‹ РЅР° 1 С…РѕРґ
+	//РјР°РЅР° 30% РѕС‚РєР°С‚ 2
+	public void StrengtheningAura()
+	{
 
-    //Смена ауры
-    //вы меняете ауру
-    //мана 20%
-    public void ChangeAura()
-    {
-
-    }
-
-    //Божественное усиление ауры
-    //усиление ауры на 1 ход
-    //мана 30% откат 2
-    public void StrengtheningAura()
-    {
-
-    }
+	}
 
 
-    //ПАСИВКИ (9) 
-    //
-    //всего можно взять 6 пасивок
-    //
-    //2 уровень - 1 пассивка
-    //5 уровень - 1 пассивки
-    //8 уровень - 2 пассивки
-    //9 уровень - 2 пассивки
-    //
-    //на 10 уровне даются все оставшиися пасивки, но в бой можно взять 6 пасивок
+	//РџРђРЎРР’РљР (9) 
+	//
+	//РІСЃРµРіРѕ РјРѕР¶РЅРѕ РІР·СЏС‚СЊ 6 РїР°СЃРёРІРѕРє
+	//
+	//2 СѓСЂРѕРІРµРЅСЊ - 1 РїР°СЃСЃРёРІРєР°
+	//5 СѓСЂРѕРІРµРЅСЊ - 1 РїР°СЃСЃРёРІРєРё
+	//8 СѓСЂРѕРІРµРЅСЊ - 2 РїР°СЃСЃРёРІРєРё
+	//9 СѓСЂРѕРІРµРЅСЊ - 2 РїР°СЃСЃРёРІРєРё
+	//
+	//РЅР° 10 СѓСЂРѕРІРЅРµ РґР°СЋС‚СЃСЏ РІСЃРµ РѕСЃС‚Р°РІС€РёРёСЃСЏ РїР°СЃРёРІРєРё, РЅРѕ РІ Р±РѕР№ РјРѕР¶РЅРѕ РІР·СЏС‚СЊ 6 РїР°СЃРёРІРѕРє
 
-    //Уссилиные доспехи
-    //ваша защита увеличинна на 120%
-    public void IncreaseArmor()
-    {
+	//РЈСЃСЃРёР»РёРЅС‹Рµ РґРѕСЃРїРµС…Рё
+	//РІР°С€Р° Р·Р°С‰РёС‚Р° СѓРІРµР»РёС‡РёРЅРЅР° РЅР° 20%
+	public void IncreaseArmor()
+	{
 
-    }
+	}
 
-    //Уссилиный урон
-    //ваша урон увеличинна на 120%
-    public void IncreaseDamage()
-    {
+	//РЈСЃСЃРёР»РёРЅС‹Р№ СѓСЂРѕРЅ
+	//РІР°С€Р° СѓСЂРѕРЅ СѓРІРµР»РёС‡РёРЅРЅР° РЅР° 20%
+	public void IncreaseDamage()
+	{
 
-    }
+	}
 
-    //Уссилиное лечение
-    //ваше лечение увеличинна на 120%
-    public void IncreaseHeal()
-    {
+	//РЈСЃСЃРёР»РёРЅРѕРµ Р»РµС‡РµРЅРёРµ
+	//РІР°С€Рµ Р»РµС‡РµРЅРёРµ СѓРІРµР»РёС‡РёРЅРЅР° РЅР° 20%
+	public void IncreaseHeal()
+	{
 
-    }
+	}
 
-    //Скорость света
-    //Ваша инициатива увеличина 10
-    public void SpeedLight()
-    {
+	//Р‘РѕР¶РµСЃС‚РІРµРЅРЅР°СЏ cРєРѕСЂРѕСЃС‚СЊ
+	//Р’Р°С€Р° РёРЅРёС†РёР°С‚РёРІР° СѓРІРµР»РёС‡РёРЅР° РЅР° 10
+	public void DivinieSpeedd()
+	{
 
-    }
+	}
 
-    //Магическая броня
-    //В начале боя на 4 хода ваша защита увеличина на 200%
-    public void MagicArmor()
-    {
+	//РњР°РіРёС‡РµСЃРєР°СЏ Р±СЂРѕРЅСЏ
+	//Р’ РЅР°С‡Р°Р»Рµ Р±РѕСЏ РЅР° 4 С…РѕРґР° РІР°С€Р° Р·Р°С‰РёС‚Р° СѓРІРµР»РёС‡РёРЅР° РЅР° 100%
+	public void MagicArmor()
+	{
 
-    }
+	}
 
-    //Божественное покровительство
-    //если ваше хп упадет ниже 25% активируеться божественый щит на 1 ход
-    //откат 5 ходов
-    public void DivineProtection()
-    {
+	//Р‘РѕР¶РµСЃС‚РІРµРЅРЅРѕРµ РїРѕРєСЂРѕРІРёС‚РµР»СЊСЃС‚РІРѕ
+	//РµСЃР»Рё РІР°С€Рµ С…Рї СѓРїР°РґРµС‚ РЅРёР¶Рµ 25% Р°РєС‚РёРІРёСЂСѓРµС‚СЊСЃСЏ Р±РѕР¶РµСЃС‚РІРµРЅС‹Р№ С‰РёС‚ РЅР° 1 С…РѕРґ
+	//РѕС‚РєР°С‚ 5 С…РѕРґРѕРІ
+	public void DivineProtection()
+	{
 
-    }
+	}
 
-    //Святые удары
-    //Ваша каждая атака востанавливает 10% маны
-    public void HolyHits()
-    {
+	//РЎРІСЏС‚С‹Рµ СѓРґР°СЂС‹
+	//Р’Р°С€Р° РєР°Р¶РґР°СЏ Р°С‚Р°РєР° РІРѕСЃС‚Р°РЅР°РІР»РёРІР°РµС‚ 10% РјР°РЅС‹
+	public void HolyHits()
+	{
 
-    }
+	}
 
-    //Бестрашный
-    //Вас нельзя испугать
-    public void Fearless()
-    {
+	//Р‘РµСЃС‚СЂР°С€РЅС‹Р№
+	//Р’Р°СЃ РЅРµР»СЊР·СЏ РёСЃРїСѓРіР°С‚СЊ
+	public void Fearless()
+	{
 
-    }
+	}
 
-    //Сила света
-    //Если враг повержен, вы усиляете свои атаки на 150% на 2 хода
-    public void Pasive9()
-    {
+	//РЎРёР»Р° СЃРІРµС‚Р°
+	//Р•СЃР»Рё РІСЂР°Рі РїРѕРІРµСЂР¶РµРЅ, РІС‹ СѓСЃРёР»СЏРµС‚Рµ СЃРІРѕРё Р°С‚Р°РєРё РЅР° 150% РЅР° 2 С…РѕРґР°
+	public void LightsPower()
+	{
 
-    }
+	}
 
-    //Ауры (даються автоматически)
-    //после взятие скила на Ауры, даеться все ауры
+	//РђСѓСЂС‹ (РґР°СЋС‚СЊСЃСЏ Р°РІС‚РѕРјР°С‚РёС‡РµСЃРєРё)
+	//РїРѕСЃР»Рµ РІР·СЏС‚РёРµ СЃРєРёР»Р° РЅР° РђСѓСЂС‹, РґР°РµС‚СЊСЃСЏ РІСЃРµ Р°СѓСЂС‹
 
-    //Аура являеться уникальной механикой для паладина,
-    //у других персонажей будут свои уникальные механики
+	//РђСѓСЂР° СЏРІР»СЏРµС‚СЊСЃСЏ СѓРЅРёРєР°Р»СЊРЅРѕР№ РјРµС…Р°РЅРёРєРѕР№ РґР»СЏ РїР°Р»Р°РґРёРЅР°,
+	//Сѓ РґСЂСѓРіРёС… РїРµСЂСЃРѕРЅР°Р¶РµР№ Р±СѓРґСѓС‚ СЃРІРѕРё СѓРЅРёРєР°Р»СЊРЅС‹Рµ РјРµС…Р°РЅРёРєРё
 
-    //Аура защиты
-    //защита союзников увеличина на 120%
-    public void AuraDefence()
-    {
+	//РђСѓСЂР° Р·Р°С‰РёС‚С‹
+	//Р·Р°С‰РёС‚Р° СЃРѕСЋР·РЅРёРєРѕРІ СѓРІРµР»РёС‡РёРЅР° РЅР° 120%
+	public void AuraDefence()
+	{
 
-    }
-    //Аура урона
-    //урон союзников увеличин на 120%
-    public void AuraAttack()
-    {
+	}
+	//РђСѓСЂР° СѓСЂРѕРЅР°
+	//СѓСЂРѕРЅ СЃРѕСЋР·РЅРёРєРѕРІ СѓРІРµР»РёС‡РёРЅ РЅР° 120%
+	public void AuraAttack()
+	{
 
-    }
-    //Аура лечения
-    //каждый ход аура востонавливает 5% хп всем союзникам
-    public void AuraHeal()
-    {
+	}
+	//РђСѓСЂР° Р»РµС‡РµРЅРёСЏ
+	//РєР°Р¶РґС‹Р№ С…РѕРґ Р°СѓСЂР° РІРѕСЃС‚РѕРЅР°РІР»РёРІР°РµС‚ 5% С…Рї РІСЃРµРј СЃРѕСЋР·РЅРёРєР°Рј
+	public void AuraHeal()
+	{
 
-    }
-    //Аура скорости
-    //каждый ход аура добовляет 5 инициативы всем союзникам
-    public void AuraSpeed()
-    {
+	}
+	//РђСѓСЂР° СЃРєРѕСЂРѕСЃС‚Рё
+	//РєР°Р¶РґС‹Р№ С…РѕРґ Р°СѓСЂР° РґРѕР±РѕРІР»СЏРµС‚ 5 РёРЅРёС†РёР°С‚РёРІС‹ РІСЃРµРј СЃРѕСЋР·РЅРёРєР°Рј
+	public void AuraSpeed()
+	{
 
-    }
+	}
 }

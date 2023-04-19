@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://c4lqcg15ux2ex"]
+
+[ext_resource type="Script" path="res://characters/control/ItemList.cs" id="1_bsdjr"]
+
+[node name="ItemList" type="Node"]
+script = ExtResource("1_bsdjr")

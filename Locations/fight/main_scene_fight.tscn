@@ -1,6 +1,8 @@
-[gd_scene load_steps=2 format=3 uid="uid://dt7v8ws8ue2lh"]
+[gd_scene load_steps=4 format=3 uid="uid://dt7v8ws8ue2lh"]
 
 [ext_resource type="PackedScene" uid="uid://dc6ubyq5aptxr" path="res://Locations/fight/point.tscn" id="1_4wcwk"]
+[ext_resource type="PackedScene" uid="uid://dyncrmwk1tmlo" path="res://characters/character.tscn" id="2_4ed7o"]
+[ext_resource type="PackedScene" uid="uid://blfmloirtcx0i" path="res://ui/buttons/buttonAbility.tscn" id="3_kbrep"]
 
 [node name="MainSceneFight" type="Node2D"]
 
@@ -46,3 +48,18 @@ position = Vector2(419, 349)
 
 [node name="Point8" parent="ConteinerMobs" instance=ExtResource("1_4wcwk")]
 position = Vector2(419, 349)
+
+[node name="Character" parent="." instance=ExtResource("2_4ed7o")]
+position = Vector2(226, 395)
+_type = "character"
+_name = "Paladin"
+
+[node name="Character2" parent="." instance=ExtResource("2_4ed7o")]
+position = Vector2(750, 446)
+_type = "mob"
+
+[node name="ButtonAbility" parent="." instance=ExtResource("3_kbrep")]
+offset_left = 1030.0
+offset_top = 512.0
+offset_right = 2062.0
+offset_bottom = 1544.0

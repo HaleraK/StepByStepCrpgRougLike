@@ -1,0 +1,14 @@
+[gd_scene load_steps=3 format=3 uid="uid://blfmloirtcx0i"]
+
+[ext_resource type="Texture2D" uid="uid://bllioyf62l022" path="res://ui/buttons/PaladinNormalAtk.png" id="1_t2fcb"]
+[ext_resource type="Script" path="res://ui/buttons/ButtonAbility.cs" id="2_4wt8n"]
+
+[node name="ButtonAbility" type="Button"]
+offset_right = 1032.0
+offset_bottom = 1032.0
+scale = Vector2(0.08, 0.08)
+icon = ExtResource("1_t2fcb")
+flat = true
+script = ExtResource("2_4wt8n")
+
+[connection signal="pressed" from="." to="." method="OnPressed"]

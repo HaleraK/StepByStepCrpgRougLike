@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://b1ustamfoxg21"]
+
+[ext_resource type="Script" path="res://characters/control/LevelTable.cs" id="1_faj68"]
+
+[node name="LevelTable" type="Node"]
+script = ExtResource("1_faj68")

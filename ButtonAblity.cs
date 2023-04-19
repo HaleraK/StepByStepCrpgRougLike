@@ -1,12 +1,9 @@
-﻿using Godot;
+using Godot;
 using System;
 
-public partial class Point : Marker2D
+public partial class ButtonAblity : Sprite2D
 {
 	// Called when the node enters the scene tree for the first time.
-
-	[Export] private string _type; //char or mob
-	[Export] private string id;
 	public override void _Ready()
 	{
 	}
@@ -15,4 +12,5 @@ public partial class Point : Marker2D
 	public override void _Process(double delta)
 	{
 	}
+
 }

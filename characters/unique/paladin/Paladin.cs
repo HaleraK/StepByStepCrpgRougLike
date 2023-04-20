@@ -64,7 +64,8 @@ public partial class Paladin : Area2D
 
 	public override void _Ready()
 	{
-		_actives[0] = new TreeSkills("NormalAttack", true);
+
+        _actives[0] = new TreeSkills("NormalAttack", true);
 
 		_actives[1] = new TreeSkills("TripleJutice", false, "NormalAttack");
 		_actives[2] = new TreeSkills("DivineIntervention", false, "TripleJutice");
@@ -122,7 +123,7 @@ public partial class Paladin : Area2D
 	{
 	}
 
-	public void TougleVisible()
+    public void TougleVisible()
 	{
 		Visible = !Visible;
 	}

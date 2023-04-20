@@ -3,6 +3,8 @@ using System;
 
 public partial class Character : Node2D
 {
+    private string _id;
+
     [Export] private float _hp = 80;
     private float _hpCurrent = 80;
     [Export] private float _hpMax = 100; //имеет смысл сделать массив с
@@ -32,7 +34,6 @@ public partial class Character : Node2D
 
     private string[] _nodes = { "Hp", "HpBase", "Init", "InitBase", "ArmorText" };
 
-
     private int _pointsForActive;
     private int _pointsForPassive;
     private int _pointsForStats;
@@ -43,6 +44,7 @@ public partial class Character : Node2D
     private int[] _countExpForLVL;
 
     private string _slots;
+    public bool PauseForAction { get; set; }
 
     public override void _Ready()
     {
@@ -68,11 +70,21 @@ public partial class Character : Node2D
 
     public void SetCharUiPos()
     {
-        GetNode("InitBase").Call("SetPosition");
+        var node = GetNode("InitBase");
+        node.Call("SetPosition");
+
         GetNode("Init").Call("SetPosition");
         GetNode("HpBase").Call("SetPosition");
-        GetNode("Hp").Call("SetPosition");
+
+        node = GetNode("Hp");
+        node.Call("SetPosition");
+
         GetNode("ArmorText").Call("SetPosition");
+    }
+
+    public string GetNodeName() 
+    { 
+        return Name;
     }
 
     public void UnHideNode()
@@ -83,14 +95,26 @@ public partial class Character : Node2D
 
     public void Initiative(double delta)
     {
+        if (PauseForAction == true) 
+        { 
+            return; 
+        }
+
         _initiativeCurrent += _initiative * (float)delta;
+
+
         if(_initiativeCurrent >= _initiativeMax)
         {
-            _initiativeCurrent = 0;
+            _initiativeCurrent = 100;
+            PauseForAction = true;
+            GD.Print(PauseForAction);
+            GetNode("Init").Call("SetSizeX");
+            return;
         }
         GetNode("Init").Call("SetSizeX");
         //GD.Print(_initiativeCurrent);
     }
+
 
     public void TakeDamage(int gamage)
     {

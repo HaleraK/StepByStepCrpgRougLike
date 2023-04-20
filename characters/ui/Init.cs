@@ -17,7 +17,8 @@ public partial class Init : Sprite2D
 
     public void GetName()
     {
-        _name = (string)GetNode("../../Character").Get("_name");
+        var parent = GetParent().Name;
+        _name = (string)GetNode("../../" + parent).Get("_name");
     }
 
     public void SetPosition()
@@ -32,8 +33,9 @@ public partial class Init : Sprite2D
 
     public void SetSizeX()
     {
-        var init = (float)GetNode("../../Character").Get("_initiativeCurrent");
-        var initMax = (float)GetNode("../../Character").Get("_initiativeMax");
+        var parent = GetParent().Name;
+        var init = (float)GetNode("../../" + parent).Get("_initiativeCurrent");
+        var initMax = (float)GetNode("../../" + parent).Get("_initiativeMax");
         var size = init / initMax;
 
         Scale = new Vector2(200 * size, Scale.Y);

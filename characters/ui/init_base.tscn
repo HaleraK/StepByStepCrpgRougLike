@@ -1,0 +1,11 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Texture2D" uid="uid://dk1wxsag7u15y" path="res://characters/whitePixel.png" id="1_6m6tr"]
+[ext_resource type="Script" path="res://characters/ui/InitBase.cs" id="2_mgyro"]
+
+[node name="InitBase" type="Sprite2D"]
+modulate = Color(0.21367, 0.1507, 0.379013, 1)
+position = Vector2(300, -92)
+scale = Vector2(200, 15)
+texture = ExtResource("1_6m6tr")
+script = ExtResource("2_mgyro")

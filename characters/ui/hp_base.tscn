@@ -1,0 +1,11 @@
+[gd_scene load_steps=3 format=3 uid="uid://b6xhigigtyfvd"]
+
+[ext_resource type="Texture2D" uid="uid://dk1wxsag7u15y" path="res://characters/whitePixel.png" id="1_oiuq7"]
+[ext_resource type="Script" path="res://characters/ui/HpBase.cs" id="2_5r842"]
+
+[node name="HpBase" type="Sprite2D"]
+modulate = Color(0.372549, 0.117647, 0.105882, 1)
+position = Vector2(121, -234)
+scale = Vector2(200, 15)
+texture = ExtResource("1_oiuq7")
+script = ExtResource("2_5r842")

@@ -1,18 +1,17 @@
-[gd_scene load_steps=19 format=3 uid="uid://dyncrmwk1tmlo"]
+[gd_scene load_steps=18 format=3 uid="uid://dyncrmwk1tmlo"]
 
 [ext_resource type="Texture2D" uid="uid://bjs1153r1x8lw" path="res://characters/unique/paladin/paladin3.png" id="1_1iyub"]
 [ext_resource type="Script" path="res://characters/Character.cs" id="1_l3u1w"]
 [ext_resource type="Script" path="res://characters/unique/paladin/Paladin.cs" id="2_7usxx"]
 [ext_resource type="Shader" path="res://characters/outline.gdshader" id="3_ev8qi"]
-[ext_resource type="Texture2D" uid="uid://dk1wxsag7u15y" path="res://characters/whitePixel.png" id="4_fjts8"]
 [ext_resource type="Script" path="res://characters/AnimatedSprite2D.cs" id="4_i1r4k"]
-[ext_resource type="Script" path="res://characters/Hp.cs" id="5_yq0p4"]
 [ext_resource type="Script" path="res://characters/unique/Slime/Slime.cs" id="6_wbj43"]
 [ext_resource type="Texture2D" uid="uid://xamlyksp156x" path="res://characters/unique/Slime/Slime.png" id="7_ho1ge"]
-[ext_resource type="Script" path="res://characters/HpBase.cs" id="7_hsvqv"]
-[ext_resource type="Script" path="res://characters/InitBase.cs" id="8_e31xd"]
-[ext_resource type="Script" path="res://characters/Init.cs" id="9_o4vkt"]
-[ext_resource type="Script" path="res://characters/ArmorText.cs" id="10_oyg6r"]
+[ext_resource type="PackedScene" uid="uid://b6xhigigtyfvd" path="res://characters/ui/hp_base.tscn" id="8_kb2av"]
+[ext_resource type="PackedScene" path="res://characters/ui/hp.tscn" id="9_85r5b"]
+[ext_resource type="PackedScene" path="res://characters/ui/init_base.tscn" id="10_f8ihi"]
+[ext_resource type="PackedScene" path="res://characters/ui/init.tscn" id="11_fcnsn"]
+[ext_resource type="PackedScene" uid="uid://cqdd8ndr8bn7t" path="res://characters/ui/armor_text.tscn" id="12_2aaxl"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_f6c0u"]
 shader = ExtResource("3_ev8qi")
@@ -48,8 +47,8 @@ animations = [{
 size = Vector2(222, 156)
 
 [node name="Character" type="Node2D"]
+position = Vector2(-6, -8)
 script = ExtResource("1_l3u1w")
-_name = "Slime"
 
 [node name="Paladin" type="Area2D" parent="."]
 visible = false
@@ -81,44 +80,16 @@ script = ExtResource("4_i1r4k")
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Slime"]
 shape = SubResource("RectangleShape2D_iykpw")
 
-[node name="HpBase" type="Sprite2D" parent="."]
-modulate = Color(0.372549, 0.117647, 0.105882, 1)
-position = Vector2(121, -234)
-scale = Vector2(200, 15)
-texture = ExtResource("4_fjts8")
-script = ExtResource("7_hsvqv")
+[node name="HpBase" parent="." instance=ExtResource("8_kb2av")]
 
-[node name="Hp" type="Sprite2D" parent="."]
-modulate = Color(0.686275, 0.266667, 0.156863, 1)
-position = Vector2(102, -236)
-scale = Vector2(200, 15)
-texture = ExtResource("4_fjts8")
-centered = false
-script = ExtResource("5_yq0p4")
+[node name="Hp" parent="." instance=ExtResource("9_85r5b")]
 
-[node name="InitBase" type="Sprite2D" parent="."]
-modulate = Color(0.21367, 0.1507, 0.379013, 1)
-position = Vector2(300, -92)
-scale = Vector2(200, 15)
-texture = ExtResource("4_fjts8")
-script = ExtResource("8_e31xd")
+[node name="InitBase" parent="." instance=ExtResource("10_f8ihi")]
 
-[node name="Init" type="Sprite2D" parent="."]
-modulate = Color(0.443137, 0.301961, 0.8, 1)
-position = Vector2(198, -135)
-scale = Vector2(200, 15)
-texture = ExtResource("4_fjts8")
-centered = false
-script = ExtResource("9_o4vkt")
+[node name="Init" parent="." instance=ExtResource("11_fcnsn")]
 
-[node name="ArmorText" type="Label" parent="."]
-offset_left = 179.0
-offset_top = 3.0
-offset_right = 229.0
-offset_bottom = 33.0
-pivot_offset = Vector2(0, 15)
-theme_override_constants/outline_size = 1
-theme_override_constants/shadow_outline_size = 0
-text = "armor"
-vertical_alignment = 1
-script = ExtResource("10_oyg6r")
+[node name="ArmorText" parent="." instance=ExtResource("12_2aaxl")]
+offset_left = 267.0
+offset_top = 169.0
+offset_right = 317.0
+offset_bottom = 199.0

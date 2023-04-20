@@ -1,0 +1,15 @@
+[gd_scene load_steps=2 format=3 uid="uid://cqdd8ndr8bn7t"]
+
+[ext_resource type="Script" path="res://characters/ui/ArmorText.cs" id="1_pmuov"]
+
+[node name="ArmorText" type="Label"]
+offset_left = 179.0
+offset_top = 3.0
+offset_right = 229.0
+offset_bottom = 33.0
+pivot_offset = Vector2(0, 15)
+theme_override_constants/outline_size = 1
+theme_override_constants/shadow_outline_size = 0
+text = "armor"
+vertical_alignment = 1
+script = ExtResource("1_pmuov")

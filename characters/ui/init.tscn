@@ -1,0 +1,12 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Texture2D" uid="uid://dk1wxsag7u15y" path="res://characters/whitePixel.png" id="1_ici07"]
+[ext_resource type="Script" path="res://characters/ui/Init.cs" id="2_mtnpy"]
+
+[node name="Init" type="Sprite2D"]
+modulate = Color(0.443137, 0.301961, 0.8, 1)
+position = Vector2(198, -135)
+scale = Vector2(200, 15)
+texture = ExtResource("1_ici07")
+centered = false
+script = ExtResource("2_mtnpy")

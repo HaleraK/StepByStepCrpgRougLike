@@ -7,6 +7,12 @@ public partial class HpBase : Sprite2D
     // Called when the node enters the scene tree for the first time.
     public override void _Ready()
 	{
+        //GetName();
+        //var tmp = (string)GetNode("../../Character").Call("GetNodeName");
+        //Name = Name + _name;
+        //GD.Print(Name);
+        //GD.Print(UniqueNameInOwner);
+        //GD.Print(tmp);
         GetName();
     }
 
@@ -17,7 +23,8 @@ public partial class HpBase : Sprite2D
 
     public void GetName()
     {
-        _name = (string)GetNode("../../Character").Get("_name");
+        var parent = GetParent().Name;
+        _name = (string)GetNode("../../" + parent).Get("_name");
     }
 
     public void SetPosition() 

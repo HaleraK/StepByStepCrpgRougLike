@@ -17,7 +17,6 @@ public partial class AnimatedSprite2D : Godot.AnimatedSprite2D
 	public float GetSizeY() 
 	{
         var size = SpriteFrames.GetFrameTexture("default", 0).GetSize();
-		GD.Print(size.Y);
 		return size.Y/10;
     }
 

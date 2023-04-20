@@ -1,53 +1,49 @@
 using Godot;
 using System;
 
-public partial class InitBase : Sprite2D
+public partial class Hp : Sprite2D
 {
     private string _name = "";
+    private string _parentName = "";
     // Called when the node enters the scene tree for the first time.
     public override void _Ready()
 	{
         GetName();
+        SetSizeX();
+
     }
 
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
 	public override void _Process(double delta)
 	{
-	}
+
+       
+
+    }
 
     public void GetName()
     {
-        _name = (string)GetNode("../../Character").Get("_name");
+        var parent = GetParent().Name;
+        _name = (string)GetNode("../../" + parent).Get("_name");
     }
 
     public void SetPosition()
     {
-
-        var node = GetNode("../" + _name + "/AnimatedSprite2D");
+        var node = GetNode("../HpBase");
         var x = (float)node.Call("GetPosX");
         var y = (float)node.Call("GetPosY");
         var sizeX = (float)node.Call("GetSizeX");
         var sizeY = (float)node.Call("GetSizeY");
-        Position = new Vector2(x, y - (sizeY / 2) - 20);
+        Position = new Vector2(x -(sizeX/2),y -(sizeY/2));
     }
 
-    public float GetSizeX()
+    public void SetSizeX()
     {
-        return Scale.X;
-    }
+        var parent = GetParent().Name;
+        var hp = (float)GetNode("../../" + parent).Get("_hp");
+        var hpMax = (float)GetNode("../../" + parent).Get("_hpMax");
+        var size = hp/hpMax;
 
-    public float GetSizeY()
-    {
-        return Scale.Y;
-    }
-
-    public float GetPosX()
-    {
-        return Position.X;
-    }
-
-    public float GetPosY()
-    {
-        return Position.Y;
+        Scale = new Vector2(200 * size, Scale.Y);
     }
 }

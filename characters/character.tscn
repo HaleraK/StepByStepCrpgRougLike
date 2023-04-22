@@ -1,4 +1,4 @@
-[gd_scene load_steps=19 format=3 uid="uid://dyncrmwk1tmlo"]
+[gd_scene load_steps=20 format=3 uid="uid://dyncrmwk1tmlo"]
 
 [ext_resource type="Texture2D" uid="uid://bjs1153r1x8lw" path="res://characters/unique/paladin/paladin3.png" id="1_1iyub"]
 [ext_resource type="Script" path="res://characters/Character.cs" id="1_l3u1w"]
@@ -12,6 +12,7 @@
 [ext_resource type="PackedScene" path="res://characters/ui/init_base.tscn" id="10_f8ihi"]
 [ext_resource type="PackedScene" path="res://characters/ui/init.tscn" id="11_fcnsn"]
 [ext_resource type="PackedScene" uid="uid://cqdd8ndr8bn7t" path="res://characters/ui/armor_text.tscn" id="12_2aaxl"]
+[ext_resource type="Script" path="res://characters/UIController.cs" id="13_sa0jl"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_f6c0u"]
 shader = ExtResource("3_ev8qi")
@@ -86,23 +87,26 @@ script = ExtResource("4_i1r4k")
 shape = SubResource("RectangleShape2D_iykpw")
 
 [node name="HpBase" parent="." instance=ExtResource("8_kb2av")]
-position = Vector2(124, -2.00002)
+position = Vector2(130, -53)
 
 [node name="Hp" parent="." instance=ExtResource("9_85r5b")]
 modulate = Color(0.133333, 0.521569, 0.243137, 1)
 position = Vector2(26, -6.00002)
 
 [node name="InitBase" parent="." instance=ExtResource("10_f8ihi")]
-position = Vector2(130, 2.99998)
+position = Vector2(297, -30)
 
 [node name="Init" parent="." instance=ExtResource("11_fcnsn")]
-position = Vector2(39, -5.00002)
+position = Vector2(30, -101)
 
 [node name="ArmorText" parent="." instance=ExtResource("12_2aaxl")]
-offset_left = 35.0
-offset_top = 34.0
-offset_right = 85.0
-offset_bottom = 64.0
+offset_left = 258.0
+offset_top = -15.0
+offset_right = 308.0
+offset_bottom = 15.0
+
+[node name="UIController" type="Node" parent="."]
+script = ExtResource("13_sa0jl")
 
 [connection signal="input_event" from="Paladin" to="." method="OnPaladinInputEvent"]
 [connection signal="mouse_entered" from="Paladin" to="." method="OnPaladinMouseEntered"]

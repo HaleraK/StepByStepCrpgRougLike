@@ -1,5 +1,7 @@
 using Godot;
+using StepByStepCrpgRougLike.characters;
 using System;
+using static Character;
 
 public partial class Paladin : Area2D
 {
@@ -11,7 +13,14 @@ public partial class Paladin : Area2D
 
 	private string _currentAura;
 
-	class Slot
+	private Character _character;
+
+	public Paladin()
+	{
+		
+	}
+
+    class Slot
 	{
 		private string _type;
 		private static readonly string[] POSIBLE_TYPES 
@@ -145,8 +154,10 @@ public partial class Paladin : Area2D
 	//обычная атака 100% атаки
 	public float NormalAttack()
 	{
-		float dammage = 0;
-		dammage += (float)GetNode(".").Get("_atk");
+		AbilityStats stats = new();
+
+        float dammage = 0;
+		dammage += (float)GetNode(".").Get("Atk");
 		return dammage;
 	}
 

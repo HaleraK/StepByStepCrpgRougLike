@@ -3,17 +3,13 @@ using System;
 
 public partial class HpBase : Sprite2D
 {
-    private string _name = "";
+    public string NameClass { get; set; }
+    private Character _character;
     // Called when the node enters the scene tree for the first time.
     public override void _Ready()
 	{
-        //GetName();
-        //var tmp = (string)GetNode("../../Character").Call("GetNodeName");
-        //Name = Name + _name;
-        //GD.Print(Name);
-        //GD.Print(UniqueNameInOwner);
-        //GD.Print(tmp);
-        GetName();
+        _character = GetParent<Character>();
+        GetNameClass();
     }
 
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -21,15 +17,15 @@ public partial class HpBase : Sprite2D
 	{
 	}
 
-    public void GetName()
+    public void GetNameClass()
     {
         var parent = GetParent().Name;
-        _name = (string)GetNode("../../" + parent).Get("_name");
+        NameClass = _character.NameClass;
     }
 
     public void SetPosition() 
     {
-        var node = GetNode("../" + _name + "/AnimatedSprite2D");
+        var node = GetNode<AnimatedSprite2D>("../" + NameClass + "/AnimatedSprite2D");
         var x = (float)node.Call("GetPosX");
         var y = (float)node.Call("GetPosY");
         var sizeX = (float)node.Call("GetSizeX");

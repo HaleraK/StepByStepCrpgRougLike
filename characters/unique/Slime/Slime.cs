@@ -1,10 +1,12 @@
 using Godot;
+using StepByStepCrpgRougLike.characters;
 using System;
 
 public partial class Slime : Area2D
 {
-	// Called when the node enters the scene tree for the first time.
-	public override void _Ready()
+    private CharacterStats _stats;
+    // Called when the node enters the scene tree for the first time.
+    public override void _Ready()
 	{
 	}
 

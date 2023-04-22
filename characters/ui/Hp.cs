@@ -3,17 +3,17 @@ using System;
 
 public partial class Hp : Sprite2D
 {
-    private string _name = "";
-    private string _parentName = "";
-    // Called when the node enters the scene tree for the first time.
+    public string NameClass { get; set; }
+    private Character _character;
+    private HpBase _hpBase;
     public override void _Ready()
 	{
-        GetName();
+        _character = GetParent<Character>();
+        _hpBase = GetNode<HpBase>("../HpBase");
+        GetNameClass();
         SetSizeX();
-
     }
 
-	// Called every frame. 'delta' is the elapsed time since the previous frame.
 	public override void _Process(double delta)
 	{
 
@@ -21,27 +21,25 @@ public partial class Hp : Sprite2D
 
     }
 
-    public void GetName()
+    public void GetNameClass()
     {
         var parent = GetParent().Name;
-        _name = (string)GetNode("../../" + parent).Get("_name");
+        NameClass = _character.NameClass;
     }
 
     public void SetPosition()
     {
-        var node = GetNode("../HpBase");
-        var x = (float)node.Call("GetPosX");
-        var y = (float)node.Call("GetPosY");
-        var sizeX = (float)node.Call("GetSizeX");
-        var sizeY = (float)node.Call("GetSizeY");
+        var x = (float)_hpBase.Call("GetPosX");
+        var y = (float)_hpBase.Call("GetPosY");
+        var sizeX = (float)_hpBase.Call("GetSizeX");
+        var sizeY = (float)_hpBase.Call("GetSizeY");
         Position = new Vector2(x -(sizeX/2),y -(sizeY/2));
     }
 
     public void SetSizeX()
     {
-        var parent = GetParent().Name;
-        var hp = (float)GetNode("../../" + parent).Get("_hp");
-        var hpMax = (float)GetNode("../../" + parent).Get("_hpMax");
+        var hp = (float)_character.Hp;
+        var hpMax = (float)_character.HpMax;
         var size = hp/hpMax;
 
         Scale = new Vector2(200 * size, Scale.Y);

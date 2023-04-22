@@ -3,13 +3,13 @@ using System;
 
 public partial class Control : Node
 {
-	private string _whoseTurn;
-	private string _typeTurn; //character mob non
+	public string WhoseTurn { set; get; }
+    public string TypeTurn { set; get; } //character mob non
     private string[] _posibleTargets;
 
     public float Damage { set; get; }
 
-    private bool _pause = false;
+    public bool Pause = false;
 
     private readonly static string[] POSIBLE_TYPES
         = { "NormalAtk", "Ability", "Ability2", "Ability3", "Ability4" };
@@ -43,12 +43,12 @@ public partial class Control : Node
 
     public override void _Process(double delta)
     {
-        if (!_pause) { 
+        if (!Pause) { 
             GetCharactersInit();
             SetTouglePause();
             SetTurn();
 
-            if (_typeTurn == "character")
+            if (TypeTurn == "Character")
             {
                 LinkButton();
             }
@@ -67,15 +67,15 @@ public partial class Control : Node
 		{
             node = GetNode("../ConteinerOfChars/" + child.Name);
             _allChars[i] = new Characters((string)child.Name);
-            _allChars[i].Type = (string)node.Get("_type");
+            _allChars[i].Type = (string)node.Get("Type");
             i++;
         }
 	}
 
     public void SetInit()
     {
-        var node = GetNode("../ConteinerOfChars/" + _whoseTurn);
-        node.Set("_initiativeCurrent", 0);
+        var node = GetNode("../ConteinerOfChars/" + WhoseTurn);
+        node.Set("InitiativeCurrent", 0);
         node.Set("PauseForAction", false);
     }
 
@@ -84,7 +84,7 @@ public partial class Control : Node
         foreach (var child in _allChars)
         {
             var node = GetNode("../ConteinerOfChars/" + child.Character);
-            child.Init = (float)node.Get("_initiativeCurrent");
+            child.Init = (float)node.Get("InitiativeCurrent");
             
         }
 
@@ -96,31 +96,31 @@ public partial class Control : Node
         {
             if (child.Init >= 100)
             {
-                _pause = true;
+                Pause = true;
                 
                 break;
             }
             else if (child.Init < 100)
             {
-                _pause = false;
+                Pause = false;
             }
         }
 
         foreach (var child in _allChars)
         {
             var node = GetNode("../ConteinerOfChars/" + child.Character);
-            node.Set("PauseForAction", _pause);
+            node.Set("PauseForAction", Pause);
         }
         
     }
 
-    public void Pause()
+    public void PauseTougle()
     {
 
         foreach (var child in _allChars)
         {
             var node = GetNode("../ConteinerOfChars/" + child.Character);
-            node.Set("PauseForAction", _pause);
+            node.Set("PauseForAction", Pause);
         }
 
     }
@@ -131,8 +131,8 @@ public partial class Control : Node
         {
             if (child.Init >= 100)
             {
-                _whoseTurn = child.Character;
-                _typeTurn = child.Type;
+                WhoseTurn = child.Character;
+                TypeTurn = child.Type;
                 break;
             }
         }
@@ -141,8 +141,8 @@ public partial class Control : Node
     public void LinkButton()
     {
         var node = GetNode("../ContainerOfActionButtons/NormalAtk");
-        node.Set("_whoseTurn", _whoseTurn);
-        node.Set("_pauseForAction", _pause);
+        node.Set("WhoseTurn", WhoseTurn);
+        node.Set("PauseForAction", Pause);
         /*
         foreach (var type in POSIBLE_TYPES)
         {
@@ -156,10 +156,10 @@ public partial class Control : Node
     public void EndTurn()
     {
         SetInit();
-        _pause = false;
-        Pause();
+        Pause = false;
+        PauseTougle();
         Damage = 0;
-        _whoseTurn = "";
+        WhoseTurn = "";
         Array.Resize(ref _posibleTargets, 0);
       
     }

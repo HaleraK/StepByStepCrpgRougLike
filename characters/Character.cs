@@ -1,46 +1,47 @@
 ﻿using Godot;
+using StepByStepCrpgRougLike.characters;
 using System;
 
 public partial class Character : Node2D
 {
     private string _id;
+    private CharacterStats _stats;
 
-    [Export] private float _hp = 80;
-    private float _hpCurrent = 80;
-    [Export] private float _hpMax = 100; //имеет смысл сделать массив с
-                                       //максимальными значениями зависимым от уровня
+    [Export]  public float Hp { get; set; } = 80;
+    [Export] public float HpMax { get; set; }  = 100; //имеет смысл сделать массив с
+                                                      //максимальными значениями зависимым от уровня
+    [Export] public float Mana { get; set; }  = 100;
+    [Export] public float ManaMax { get; set; }  = 100;
 
-    [Export] private float _mana = 100;
-    [Export] private float _manaMax = 100;
+    [Export] public float Armor { get; set; }  = 10;
+    [Export] public float ArmorMax { get; set; } = 10;
 
-    [Export] private float _armor = 10;
-    [Export] private float _armorMax = 10;
+    [Export] public float Atk { get; set; } = 30;
+    [Export] public float AtkMax { get; set; } = 10;
 
-    [Export] private float _atk = 30;
-    [Export] private float _atkMax = 10;
+    [Export] public float Initiative { get; set; } = 8;
+    public float InitiativeCurrent { get; set; } = 0;
+    [Export] public float InitiativeMax { get; set; } = 100;
+    [Export] public float CritRate { get; set; } = 0;
+    [Export] public float CritAtk { get; set; } = 140;
+    [Export] public int LVL { get; set; } = 1;
+    
 
-    [Export] private float _initiative = 8;
-    private float _initiativeCurrent = 0;
-    [Export] private float _initiativeMax = 100;
-    [Export] private float _critRate = 0;
-    [Export] private float _critAtk = 140;
-    [Export] private int _lvl = 1;
+    [Export] public string Type { get; set; } = "";
+    private static readonly string[] POSIBLE_TYPES = { "Character", "Mob", "Npc" };
 
-    [Export] private string _type = "";
-    private static readonly string[] POSIBLE_TYPES = { "character", "mob", "npc" };
-
-    [Export] private string _name = "";
+    [Export] public string NameClass { get; set; } = "";
     private static readonly string[] POSIBLE_NAMES = { "Paladin", "Slime"};
 
-    private string[] _nodes = { "Hp", "HpBase", "Init", "InitBase", "ArmorText" };
+    private string[] _charUiNames = { "Hp", "HpBase", "Init", "InitBase", "ArmorText" };
 
-    private int _pointsForActive;
-    private int _pointsForPassive;
-    private int _pointsForStats;
+    public int PointsForActive { get; set; }
+    public int PointsForPassive { get; set; }
+    public int PointsForStats { get; set; }
 
     private const int LVLMAX = 10;
 
-    private int _exp = 0;
+    public int Exp { get; set; } = 0;
     private int[] _countExpForLVL;
 
     private string _slots;
@@ -49,19 +50,56 @@ public partial class Character : Node2D
     private float _time = 0;
     private string _color;
 
+    private UIController _uiController;
+
+    public Action<float> DamageTaken { get; set; }
+    public Action<float> InitChanged { get; set; }
+
+    public class AbilityStats
+    {
+        public class Target
+        {
+            private int _posiblePos;
+            private int _priority;
+            public Target(int posiblePos, int priority)
+            {
+                _posiblePos = posiblePos;
+                _priority = priority;
+            }
+            public Target()
+            {
+                
+            }
+        }
+        private float _damage;
+        private float _heal;
+        private string _buffDebuffName;
+
+        public AbilityStats(float damage, float heal, string buffDebuff)
+        {
+            _damage = damage;
+            _heal = heal;
+            _buffDebuffName = buffDebuff;
+        }
+
+        public AbilityStats()
+        {
+            
+        }
+
+    }
+
     public override void _Ready()
     {
-        //Position = new Vector2(300, 300);
-        UnHideNode();
-        SetCharUiPos();
+        _uiController = GetNode<UIController>("UIController");
     }
 
     public override void _Process(double delta)
     {
-        Initiative(delta);
+        InitiativeCounter(delta);
         SetOutlineMode((float)delta);
 
-        switch (_name)
+        switch (NameClass)
         {
             case "Paladin":
                 PaladinControler();
@@ -70,6 +108,60 @@ public partial class Character : Node2D
                 SlimeControler();
                 break;
         }
+    }
+
+    public void InitiativeCounter(double delta)
+    {
+        if (PauseForAction == true)
+        {
+            return;
+        }
+        InitiativeCurrent += Initiative * (float)delta;
+
+
+        if (InitiativeCurrent >= InitiativeMax)
+        {
+            InitiativeCurrent = 100;
+            PauseForAction = true;
+            InitChanged.Invoke(InitiativeCurrent);
+            return;
+        }
+        InitChanged.Invoke(InitiativeCurrent);
+    }
+
+    public void LinkAbility()
+    {
+
+    }
+
+    //абилка отдает значения
+    //
+    //posible targets
+    //heal / atk / buff / debuf
+    //
+    public void NormalAtk()
+    {
+
+    }
+
+    public void Ability1()
+    {
+
+    }
+
+    public void Ability2()
+    {
+
+    }
+
+    public void Ability3()
+    {
+
+    }
+
+    public void Ability4()
+    {
+
     }
 
     public void OnEnemyClick(InputEvent ev)
@@ -111,11 +203,11 @@ public partial class Character : Node2D
 
     public void OnMouseExit()
     {
-        if (_type == "character")
+        if (Type == "Character")
         {
             OutlineModeYellow();
         }
-        if (_type == "mob")
+        if (Type == "Mob")
         {
             OutlineModeRed();
         }
@@ -129,15 +221,6 @@ public partial class Character : Node2D
     public void OnSlimeMouseExited()
     {
         OnMouseExit();
-    }
-
-    public void SetCharUiPos()
-    {
-        GetNode("InitBase").Call("SetPosition");
-        GetNode("Init").Call("SetPosition");
-        GetNode("HpBase").Call("SetPosition");
-        GetNode("Hp").Call("SetPosition");
-        GetNode("ArmorText").Call("SetPosition");
     }
 
     public string GetNodeName() 
@@ -154,11 +237,11 @@ public partial class Character : Node2D
     {
         if (PauseForAction ==  false)
         {
-            if (_type == "character")
+            if (Type == "Character")
             {
                 OutlineModeYellow();
             }
-            if (_type == "mob")
+            if (Type == "Mob")
             {
                 OutlineModeRed();
             }
@@ -168,17 +251,17 @@ public partial class Character : Node2D
 
     public void OutlineModeYellow()
     {
-        var node = GetNode(_name + "/AnimatedSprite2D");
+        var node = GetNode(NameClass + "/AnimatedSprite2D");
         node.Call("SetOutlineColor", "#b78a19");
     }
     public void OutlineModeRed()
     {
-        var node = GetNode(_name + "/AnimatedSprite2D");
+        var node = GetNode(NameClass + "/AnimatedSprite2D");
         node.Call("SetOutlineColor", "#af4428");
     }
     public void OutlineModeGreen()
     {
-        var node = GetNode(_name + "/AnimatedSprite2D");
+        var node = GetNode(NameClass + "/AnimatedSprite2D");
         node.Call("SetOutlineColor", "#22853e");
     }
     public void OutlineModeYellowGreen(float delta)
@@ -193,7 +276,7 @@ public partial class Character : Node2D
             {
                 _color = "#22853e";
             }
-            var node = GetNode(_name + "/AnimatedSprite2D");
+            var node = GetNode(NameClass + "/AnimatedSprite2D");
             node.Call("SetOutlineColor", _color);
             _time = 0;
         }
@@ -204,43 +287,15 @@ public partial class Character : Node2D
         return a += 1 * delta;
     }
 
-    public void UnHideNode()
-    {
-        var node = GetNode(_name);
-        node.Call("TougleVisible");
-    }
-
-    public void Initiative(double delta)
-    {
-        if (PauseForAction == true) 
-        { 
-            return; 
-        }
-
-        _initiativeCurrent += _initiative * (float)delta;
-
-
-        if(_initiativeCurrent >= _initiativeMax)
-        {
-            _initiativeCurrent = 100;
-            PauseForAction = true;
-            GetNode("Init").Call("SetSizeX");
-            return;
-        }
-        GetNode("Init").Call("SetSizeX");
-    }
-
-
     public void TakeDamage(float damage)
     {
-        _hp += damage;
-        GetNode("Hp").Call("SetSizeX");
+        Hp += damage;
+        DamageTaken.Invoke(Hp);
     }
 
     public float GiveDamage()
     {
-        float damage = _atk;
-        GD.Print(damage);
+        float damage = Atk;
         return damage;
     }
 

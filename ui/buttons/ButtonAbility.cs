@@ -3,13 +3,16 @@ using System;
 
 public partial class ButtonAbility : Button
 {
-	[Export] private string _type = "";
+	[Export] public string Type { get; set; }
 	private readonly static string[] POSIBLE_TYPES
 		= { "NormalAtk", "Ability", "Ability2", "Ability3", "Ability4" };
 
-	public override void _Ready()
+    private Control _control;
+
+    public override void _Ready()
 	{
-	}
+        _control = GetNode<Control>("../../Control");
+    }
 
 	public override void _Process(double delta)
 	{
@@ -17,20 +20,16 @@ public partial class ButtonAbility : Button
 
 	public void OnPressed()
 	{
-        var node = GetNode("../../Control");
-        string whoseTurn = (string)node.Get("_whoseTurn");
-        string _typeTurn = (string)node.Get("_typeTurn");
+        string whoseTurn = (string)_control.WhoseTurn;
+        string typeTurn = (string)_control.TypeTurn;
 
-        node = GetNode("../../").GetNode("ConteinerOfChars/" + whoseTurn);
+        var node = GetNode("../../").GetNode("ConteinerOfChars/" + whoseTurn);
 
-		if(_type == "NormalAtk" && _typeTurn == "character")
+		if (Type == "NormalAtk" && typeTurn == "Character")
 		{
 			float damage = (float)node.Call("GiveDamage");
-			
-			node = GetNode("../../Control");
-            node.Set("Damage", damage);
+            _control.Set("Damage", damage);
         }
-	
 	}
 
 }

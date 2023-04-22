@@ -16,7 +16,7 @@ public partial class Character : Node2D
     [Export] private float _armor = 10;
     [Export] private float _armorMax = 10;
 
-    [Export] private float _atk = 10;
+    [Export] private float _atk = 30;
     [Export] private float _atkMax = 10;
 
     [Export] private float _initiative = 8;
@@ -46,6 +46,9 @@ public partial class Character : Node2D
     private string _slots;
     public bool PauseForAction { get; set; }
 
+    private float _time = 0;
+    private string _color;
+
     public override void _Ready()
     {
         //Position = new Vector2(300, 300);
@@ -56,6 +59,7 @@ public partial class Character : Node2D
     public override void _Process(double delta)
     {
         Initiative(delta);
+        SetOutlineMode((float)delta);
 
         switch (_name)
         {
@@ -68,23 +72,136 @@ public partial class Character : Node2D
         }
     }
 
+    public void OnEnemyClick(InputEvent ev)
+    {
+        var btn = ev as InputEventMouseButton;
+        if (((btn != null) && ((int)MouseButton.Left == 1)))
+        {
+            var node = GetNode("../../Control");
+            float damage = (float)node.Get("Damage");
+            TakeDamage(-damage);
+            node.Call("EndTurn");
+        }
+    }
+
+    public void OnPaladinInputEvent(Viewport viewport, InputEvent ev, int shape_idx)
+    {
+        OnEnemyClick(ev);
+    }
+
+    public void OnSlimeInputEvent(Viewport viewport, InputEvent ev, int shape_idx)
+    {
+        OnEnemyClick(ev);
+    }
+
+    public void OnMouseEnter()
+    {
+        OutlineModeGreen();
+    }
+
+    public void OnPaladinMouseEntered()
+    {
+        OnMouseEnter();
+    }
+
+    public void OnSlimeMouseEntered()
+    {
+        OnMouseEnter();
+    }
+
+    public void OnMouseExit()
+    {
+        if (_type == "character")
+        {
+            OutlineModeYellow();
+        }
+        if (_type == "mob")
+        {
+            OutlineModeRed();
+        }
+    }
+
+    public void OnPaladinMouseExited()
+    {
+        OnMouseExit();
+    }
+
+    public void OnSlimeMouseExited()
+    {
+        OnMouseExit();
+    }
+
     public void SetCharUiPos()
     {
-        var node = GetNode("InitBase");
-        node.Call("SetPosition");
-
+        GetNode("InitBase").Call("SetPosition");
         GetNode("Init").Call("SetPosition");
         GetNode("HpBase").Call("SetPosition");
-
-        node = GetNode("Hp");
-        node.Call("SetPosition");
-
+        GetNode("Hp").Call("SetPosition");
         GetNode("ArmorText").Call("SetPosition");
     }
 
     public string GetNodeName() 
     { 
         return Name;
+    }
+
+    //оулайн желтый, зеленый, красный, моргающий, красно-зереный (мегающий)
+    //желтый - союзные
+    //красный - вражеские
+    //зеленый - ход вашего персонажа
+    //желто-зереный - можно выбрать абилкой
+    public void SetOutlineMode(float delta)
+    {
+        if (PauseForAction ==  false)
+        {
+            if (_type == "character")
+            {
+                OutlineModeYellow();
+            }
+            if (_type == "mob")
+            {
+                OutlineModeRed();
+            }
+        } 
+
+    }
+
+    public void OutlineModeYellow()
+    {
+        var node = GetNode(_name + "/AnimatedSprite2D");
+        node.Call("SetOutlineColor", "#b78a19");
+    }
+    public void OutlineModeRed()
+    {
+        var node = GetNode(_name + "/AnimatedSprite2D");
+        node.Call("SetOutlineColor", "#af4428");
+    }
+    public void OutlineModeGreen()
+    {
+        var node = GetNode(_name + "/AnimatedSprite2D");
+        node.Call("SetOutlineColor", "#22853e");
+    }
+    public void OutlineModeYellowGreen(float delta)
+    {
+        _time = Timer(delta, _time);
+        if (_time > 1f)
+        {
+            if (_color == "#22853e")
+            {
+                _color = "#b78a19";
+            } else
+            {
+                _color = "#22853e";
+            }
+            var node = GetNode(_name + "/AnimatedSprite2D");
+            node.Call("SetOutlineColor", _color);
+            _time = 0;
+        }
+    }
+
+    float Timer(float delta, float a)
+    {
+        return a += 1 * delta;
     }
 
     public void UnHideNode()
@@ -107,25 +224,24 @@ public partial class Character : Node2D
         {
             _initiativeCurrent = 100;
             PauseForAction = true;
-            GD.Print(PauseForAction);
             GetNode("Init").Call("SetSizeX");
             return;
         }
         GetNode("Init").Call("SetSizeX");
-        //GD.Print(_initiativeCurrent);
     }
 
 
-    public void TakeDamage(int gamage)
+    public void TakeDamage(float damage)
     {
-
+        _hp += damage;
+        GetNode("Hp").Call("SetSizeX");
     }
 
-    public int GiveDamage()
+    public float GiveDamage()
     {
-        int damage = 0;
+        float damage = _atk;
+        GD.Print(damage);
         return damage;
-
     }
 
     public void PaladinControler()

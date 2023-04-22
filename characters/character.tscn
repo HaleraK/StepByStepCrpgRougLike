@@ -1,4 +1,4 @@
-[gd_scene load_steps=18 format=3 uid="uid://dyncrmwk1tmlo"]
+[gd_scene load_steps=19 format=3 uid="uid://dyncrmwk1tmlo"]
 
 [ext_resource type="Texture2D" uid="uid://bjs1153r1x8lw" path="res://characters/unique/paladin/paladin3.png" id="1_1iyub"]
 [ext_resource type="Script" path="res://characters/Character.cs" id="1_l3u1w"]
@@ -15,7 +15,7 @@
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_f6c0u"]
 shader = ExtResource("3_ev8qi")
-shader_parameter/outline_width = 4.0
+shader_parameter/outline_width = 16.0
 shader_parameter/outline_color = Color(0.717647, 0.541176, 0.0980392, 1)
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_5ifin"]
@@ -31,6 +31,11 @@ animations = [{
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_26a0s"]
 size = Vector2(2750, 3070)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_mqbga"]
+shader = ExtResource("3_ev8qi")
+shader_parameter/outline_width = 16.0
+shader_parameter/outline_color = Color(0.686275, 0.266667, 0.156863, 1)
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_lvc2b"]
 animations = [{
@@ -72,24 +77,37 @@ script = ExtResource("6_wbj43")
 metadata/_edit_group_ = true
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="Slime"]
-material = SubResource("ShaderMaterial_f6c0u")
+material = SubResource("ShaderMaterial_mqbga")
 scale = Vector2(0.1, 0.1)
 sprite_frames = SubResource("SpriteFrames_lvc2b")
 script = ExtResource("4_i1r4k")
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Slime"]
+[node name="CollisionSlime" type="CollisionShape2D" parent="Slime"]
 shape = SubResource("RectangleShape2D_iykpw")
 
 [node name="HpBase" parent="." instance=ExtResource("8_kb2av")]
+position = Vector2(124, -2.00002)
 
 [node name="Hp" parent="." instance=ExtResource("9_85r5b")]
+modulate = Color(0.133333, 0.521569, 0.243137, 1)
+position = Vector2(26, -6.00002)
 
 [node name="InitBase" parent="." instance=ExtResource("10_f8ihi")]
+position = Vector2(130, 2.99998)
 
 [node name="Init" parent="." instance=ExtResource("11_fcnsn")]
+position = Vector2(39, -5.00002)
 
 [node name="ArmorText" parent="." instance=ExtResource("12_2aaxl")]
-offset_left = 267.0
-offset_top = 169.0
-offset_right = 317.0
-offset_bottom = 199.0
+offset_left = 35.0
+offset_top = 34.0
+offset_right = 85.0
+offset_bottom = 64.0
+
+[connection signal="input_event" from="Paladin" to="." method="OnPaladinInputEvent"]
+[connection signal="mouse_entered" from="Paladin" to="." method="OnPaladinMouseEntered"]
+[connection signal="mouse_entered" from="Paladin" to="Paladin" method="OnMouseEntered"]
+[connection signal="mouse_exited" from="Paladin" to="." method="OnPaladinMouseExited"]
+[connection signal="input_event" from="Slime" to="." method="OnSlimeInputEvent"]
+[connection signal="mouse_entered" from="Slime" to="." method="OnSlimeMouseEntered"]
+[connection signal="mouse_exited" from="Slime" to="." method="OnSlimeMouseExited"]

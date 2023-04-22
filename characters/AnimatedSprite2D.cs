@@ -14,6 +14,13 @@ public partial class AnimatedSprite2D : Godot.AnimatedSprite2D
 	{
 	}
 
+	public void SetOutlineColor(string color)
+	{
+        
+        (Material as ShaderMaterial).SetShaderParameter("outline_color", Color.FromHtml(color));
+
+    }
+
 	public float GetSizeY() 
 	{
         var size = SpriteFrames.GetFrameTexture("default", 0).GetSize();

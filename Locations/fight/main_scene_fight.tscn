@@ -53,13 +53,13 @@ position = Vector2(419, 349)
 [node name="ConteinerOfChars" type="Node" parent="."]
 
 [node name="Character" parent="ConteinerOfChars" instance=ExtResource("2_4ed7o")]
-position = Vector2(172, 376)
+position = Vector2(163, 351)
 _armor = 12.0
 _type = "character"
 _name = "Paladin"
 
 [node name="Character3" parent="ConteinerOfChars" instance=ExtResource("2_4ed7o")]
-position = Vector2(673, 534)
+position = Vector2(529, 458)
 _hp = 30.0
 _armor = 6.0
 _initiative = 4.0
@@ -67,7 +67,7 @@ _type = "mob"
 _name = "Slime"
 
 [node name="Character2" parent="ConteinerOfChars" instance=ExtResource("2_4ed7o")]
-position = Vector2(955, 451)
+position = Vector2(888, 278)
 _armor = 7.0
 _initiative = 6.0
 _type = "mob"

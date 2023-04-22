@@ -123,6 +123,12 @@ public partial class Paladin : Area2D
 	{
 	}
 
+	public void OnMouseEntered()
+	{
+		
+		
+	}
+
     public void TougleVisible()
 	{
 		Visible = !Visible;

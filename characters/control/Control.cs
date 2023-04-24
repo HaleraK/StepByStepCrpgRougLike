@@ -1,58 +1,31 @@
-using Godot;
+﻿using Godot;
 using System;
 
 public partial class Control : Node
 {
-	public string WhoseTurn { set; get; }
-    public string TypeTurn { set; get; } //character mob non
     private string[] _posibleTargets;
-
-    public float Damage { set; get; }
-
     public bool Pause = false;
+    public bool Turn = false;
+    public string TypeTurn;
+
+    private AbilityStats _abilityStats;
+    private Character _whoseTurn;
 
     private readonly static string[] POSIBLE_TYPES
-        = { "NormalAtk", "Ability", "Ability2", "Ability3", "Ability4" };
+        = { "NormalAtk", "Ability1", "Ability2", "Ability3", "Ability4" };
 
-    private Characters[] _allChars;
+    private Character[] _allChars;
+    private ButtonAbility[] _buttonsAbility;
 
-    public class Characters
-    {
-        public string Character { get; set; }
-        public float Init { get; set; }
-        public string Type { get; set; }
-        public bool IsTurn { get; set; }
-
-        public Characters(string characters, float init, string type)
-        {
-            Character = characters;
-            Init = init;
-            Type = type;
-        }
-
-        public Characters(string characters)
-        {
-            Character = characters;
-        }
-    }
-	
-	public override void _Ready()
+    public override void _Ready()
 	{
 		GetCharactersList();
-	}
+        GetButtons();
+    }
 
     public override void _Process(double delta)
     {
-        if (!Pause) { 
-            GetCharactersInit();
-            SetTouglePause();
-            SetTurn();
-
-            if (TypeTurn == "Character")
-            {
-                LinkButton();
-            }
-        }   
+           
     }
 
 	public void GetCharactersList() 
@@ -65,103 +38,93 @@ public partial class Control : Node
         Array.Resize(ref _allChars, children.Count);
         foreach ( var child in children )
 		{
-            node = GetNode("../ConteinerOfChars/" + child.Name);
-            _allChars[i] = new Characters((string)child.Name);
-            _allChars[i].Type = (string)node.Get("Type");
+            _allChars[i] = GetNode<Character>("../ConteinerOfChars/" + child.Name);
+            _allChars[i].InitChangedTo100 += StartTurn;
             i++;
         }
-	}
-
-    public void SetInit()
-    {
-        var node = GetNode("../ConteinerOfChars/" + WhoseTurn);
-        node.Set("InitiativeCurrent", 0);
-        node.Set("PauseForAction", false);
     }
 
-    public void GetCharactersInit() 
+    public void SetInitTo0(Character character)
     {
-        foreach (var child in _allChars)
+        character.InitiativeCurrent = 0;
+        character.PauseForAction = false;
+    }
+
+    public void PauseAll(bool pause)
+    {
+        for (int i = 0; i< _allChars.Length; i++)
         {
-            var node = GetNode("../ConteinerOfChars/" + child.Character);
-            child.Init = (float)node.Get("InitiativeCurrent");
-            
+            _allChars[i].PauseForAction = pause;
         }
 
     }
 
-	public void SetTouglePause()
-	{
-        foreach (var child in _allChars)
+    public void GetButtons() 
+    {
+        Array.Resize(ref _buttonsAbility, POSIBLE_TYPES.Length);
+        for (var i = 0; i < POSIBLE_TYPES.Length; i++)
         {
-            if (child.Init >= 100)
-            {
-                Pause = true;
-                
+            _buttonsAbility[i] = GetNode<ButtonAbility>("../ContainerOfActionButtons/" + POSIBLE_TYPES[i]);
+        }
+       
+    }
+
+    public void SetAbilityStats(AbilityStats stats) 
+    { 
+        _abilityStats = stats;
+    }
+
+    public AbilityStats GetAbilityStats()
+    {
+        return _abilityStats;
+    }
+
+    public void MobTurn()
+    {
+        //заглушка
+        AbilityStats statsTaken = _whoseTurn.NormalAtk();
+        GetNode("../").GetNode<Character>("ConteinerOfChars/Character").TakeDamage((float)statsTaken.Damage);
+        EndTurn();
+    }
+
+    public void StartTurn(Character character)
+    {
+        _whoseTurn = character;
+        Pause = true;
+        Turn = true;
+        TypeTurn = character.Type;
+        PauseAll(Pause);
+
+        switch (TypeTurn)
+        {
+            case "Mob":
+                MobTurn();
                 break;
-            }
-            else if (child.Init < 100)
-            {
-                Pause = false;
-            }
-        }
-
-        foreach (var child in _allChars)
-        {
-            var node = GetNode("../ConteinerOfChars/" + child.Character);
-            node.Set("PauseForAction", Pause);
-        }
-        
-    }
-
-    public void PauseTougle()
-    {
-
-        foreach (var child in _allChars)
-        {
-            var node = GetNode("../ConteinerOfChars/" + child.Character);
-            node.Set("PauseForAction", Pause);
-        }
-
-    }
-
-    public void SetTurn()
-    {
-        foreach (var child in _allChars)
-        {
-            if (child.Init >= 100)
-            {
-                WhoseTurn = child.Character;
-                TypeTurn = child.Type;
+            case "Character":
+                foreach (var but in _buttonsAbility)
+                {
+                    but.SetWhoseTurn(_whoseTurn, TypeTurn);
+                }
                 break;
-            }
         }
-    }
-
-    public void LinkButton()
-    {
-        var node = GetNode("../ContainerOfActionButtons/NormalAtk");
-        node.Set("WhoseTurn", WhoseTurn);
-        node.Set("PauseForAction", Pause);
-        /*
-        foreach (var type in POSIBLE_TYPES)
-        {
-            var node = GetNode("../ContainerOfActionButtons/" + type);
-            node.Set("_whoseTurn", _whoseTurn);
-            node.Set("_pauseForAction", _pause);
-        }
-        */
     }
 
     public void EndTurn()
     {
-        SetInit();
         Pause = false;
-        PauseTougle();
-        Damage = 0;
-        WhoseTurn = "";
+        Turn = false;
+        TypeTurn = "";
+        SetInitTo0(_whoseTurn);
+        _whoseTurn = null;
+        _abilityStats = null;
+        PauseAll(Pause);
+
         Array.Resize(ref _posibleTargets, 0);
-      
+
+        foreach (var but in _buttonsAbility)
+        {
+            but.DelWhoseTurn();
+        }
     }
 
 }

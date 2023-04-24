@@ -1,7 +1,7 @@
 [gd_scene load_steps=5 format=3 uid="uid://dt7v8ws8ue2lh"]
 
 [ext_resource type="PackedScene" uid="uid://dc6ubyq5aptxr" path="res://Locations/fight/point.tscn" id="1_4wcwk"]
-[ext_resource type="PackedScene" uid="uid://dyncrmwk1tmlo" path="res://characters/character.tscn" id="2_4ed7o"]
+[ext_resource type="PackedScene" uid="uid://daroc00a100d" path="res://characters/character.tscn" id="2_4ed7o"]
 [ext_resource type="PackedScene" uid="uid://blfmloirtcx0i" path="res://ui/buttons/buttonAbility.tscn" id="3_kbrep"]
 [ext_resource type="PackedScene" uid="uid://cs3nv7qtwlmgu" path="res://characters/control/control.tscn" id="4_lf63b"]
 
@@ -55,6 +55,7 @@ position = Vector2(419, 349)
 [node name="Character" parent="ConteinerOfChars" instance=ExtResource("2_4ed7o")]
 position = Vector2(163, 351)
 Hp = 100.0
+Armor = 5.0
 Type = "Character"
 NameClass = "Paladin"
 
@@ -62,6 +63,7 @@ NameClass = "Paladin"
 position = Vector2(529, 458)
 Armor = 2.0
 Initiative = 4.0
+HaveMana = false
 Type = "Mob"
 NameClass = "Slime"
 
@@ -70,10 +72,39 @@ position = Vector2(888, 278)
 Hp = 70.0
 Armor = 3.0
 Initiative = 6.0
+HaveMana = false
 Type = "Mob"
 NameClass = "Slime"
 
 [node name="ContainerOfActionButtons" type="Node" parent="."]
+
+[node name="Ability4" parent="ContainerOfActionButtons" instance=ExtResource("3_kbrep")]
+offset_left = 642.0
+offset_top = 515.0
+offset_right = 1674.0
+offset_bottom = 1547.0
+Type = "Ability4"
+
+[node name="Ability3" parent="ContainerOfActionButtons" instance=ExtResource("3_kbrep")]
+offset_left = 736.0
+offset_top = 516.0
+offset_right = 1768.0
+offset_bottom = 1548.0
+Type = "Ability3"
+
+[node name="Ability2" parent="ContainerOfActionButtons" instance=ExtResource("3_kbrep")]
+offset_left = 832.0
+offset_top = 502.0
+offset_right = 1864.0
+offset_bottom = 1534.0
+Type = "Ability2"
+
+[node name="Ability1" parent="ContainerOfActionButtons" instance=ExtResource("3_kbrep")]
+offset_left = 927.0
+offset_top = 507.0
+offset_right = 1959.0
+offset_bottom = 1539.0
+Type = "Ability1"
 
 [node name="NormalAtk" parent="ContainerOfActionButtons" instance=ExtResource("3_kbrep")]
 offset_left = 1030.0

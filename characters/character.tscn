@@ -1,21 +1,31 @@
-[gd_scene load_steps=20 format=3 uid="uid://dyncrmwk1tmlo"]
+[gd_scene load_steps=31 format=3 uid="uid://daroc00a100d"]
 
 [ext_resource type="Texture2D" uid="uid://bjs1153r1x8lw" path="res://characters/unique/paladin/paladin3.png" id="1_1iyub"]
 [ext_resource type="Script" path="res://characters/Character.cs" id="1_l3u1w"]
 [ext_resource type="Script" path="res://characters/unique/paladin/Paladin.cs" id="2_7usxx"]
-[ext_resource type="Shader" path="res://characters/outline.gdshader" id="3_ev8qi"]
+[ext_resource type="Shader" path="res://characters/ui/outline.gdshader" id="3_6m5bc"]
 [ext_resource type="Script" path="res://characters/AnimatedSprite2D.cs" id="4_i1r4k"]
 [ext_resource type="Script" path="res://characters/unique/Slime/Slime.cs" id="6_wbj43"]
 [ext_resource type="Texture2D" uid="uid://xamlyksp156x" path="res://characters/unique/Slime/Slime.png" id="7_ho1ge"]
 [ext_resource type="PackedScene" uid="uid://b6xhigigtyfvd" path="res://characters/ui/hp_base.tscn" id="8_kb2av"]
-[ext_resource type="PackedScene" path="res://characters/ui/hp.tscn" id="9_85r5b"]
+[ext_resource type="Texture2D" uid="uid://dk1wxsag7u15y" path="res://characters/whitePixel.png" id="8_puvxr"]
+[ext_resource type="PackedScene" uid="uid://fg8jxomt5edv" path="res://characters/ui/hp.tscn" id="9_85r5b"]
+[ext_resource type="Script" path="res://characters/ui/ManaBase.cs" id="9_mps4m"]
 [ext_resource type="PackedScene" path="res://characters/ui/init_base.tscn" id="10_f8ihi"]
+[ext_resource type="Script" path="res://characters/ui/Mana.cs" id="11_amqcw"]
 [ext_resource type="PackedScene" path="res://characters/ui/init.tscn" id="11_fcnsn"]
 [ext_resource type="PackedScene" uid="uid://cqdd8ndr8bn7t" path="res://characters/ui/armor_text.tscn" id="12_2aaxl"]
-[ext_resource type="Script" path="res://characters/UIController.cs" id="13_sa0jl"]
+[ext_resource type="PackedScene" uid="uid://bkhv4f5igvuvn" path="res://characters/control/buff_debuff_list.tscn" id="14_45jvh"]
+[ext_resource type="Script" path="res://characters/ui/ManaText.cs" id="15_mmsl4"]
+[ext_resource type="PackedScene" uid="uid://b1ustamfoxg21" path="res://characters/control/level_table.tscn" id="15_w25l3"]
+[ext_resource type="Script" path="res://characters/ui/HpText.cs" id="16_omrdh"]
+[ext_resource type="Script" path="res://characters/ui/UIController.cs" id="17_7agbf"]
+[ext_resource type="Script" path="res://characters/SkillList.cs" id="17_jn0gg"]
+[ext_resource type="Script" path="res://characters/AbilityStats.cs" id="18_3g232"]
+[ext_resource type="Script" path="res://characters/ui/OutLine.cs" id="18_s2tar"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_f6c0u"]
-shader = ExtResource("3_ev8qi")
+shader = ExtResource("3_6m5bc")
 shader_parameter/outline_width = 16.0
 shader_parameter/outline_color = Color(0.717647, 0.541176, 0.0980392, 1)
 
@@ -33,8 +43,41 @@ animations = [{
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_26a0s"]
 size = Vector2(2750, 3070)
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_mqbga"]
-shader = ExtResource("3_ev8qi")
+[sub_resource type="Shader" id="Shader_0aqpk"]
+code = "shader_type canvas_item;
+
+uniform float outline_width = 2.0;
+uniform vec4 outline_color : source_color;
+
+void fragment() {
+	vec4 col = texture(TEXTURE, UV);
+	vec2 ps = TEXTURE_PIXEL_SIZE;
+	float a;
+	float maxa = col.a;
+	float mina = col.a;
+
+	a = texture(TEXTURE, UV + vec2(0.0, -outline_width) * ps).a;
+	maxa = max(a, maxa);
+	mina = min(a, mina);
+
+	a = texture(TEXTURE, UV + vec2(0.0, outline_width) * ps).a;
+	maxa = max(a, maxa);
+	mina = min(a, mina);
+
+	a = texture(TEXTURE, UV + vec2(-outline_width, 0.0) * ps).a;
+	maxa = max(a, maxa);
+	mina = min(a, mina);
+
+	a = texture(TEXTURE, UV + vec2(outline_width, 0.0) * ps).a;
+	maxa = max(a, maxa);
+	mina = min(a, mina);
+
+	COLOR = mix(col, outline_color, maxa - mina);
+}
+"
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_0wuh3"]
+shader = SubResource("Shader_0aqpk")
 shader_parameter/outline_width = 16.0
 shader_parameter/outline_color = Color(0.686275, 0.266667, 0.156863, 1)
 
@@ -78,7 +121,7 @@ script = ExtResource("6_wbj43")
 metadata/_edit_group_ = true
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="Slime"]
-material = SubResource("ShaderMaterial_mqbga")
+material = SubResource("ShaderMaterial_0wuh3")
 scale = Vector2(0.1, 0.1)
 sprite_frames = SubResource("SpriteFrames_lvc2b")
 script = ExtResource("4_i1r4k")
@@ -86,31 +129,87 @@ script = ExtResource("4_i1r4k")
 [node name="CollisionSlime" type="CollisionShape2D" parent="Slime"]
 shape = SubResource("RectangleShape2D_iykpw")
 
+[node name="ManaBase" type="Sprite2D" parent="."]
+modulate = Color(0.0666667, 0.27451, 0.521569, 1)
+position = Vector2(135, 156)
+scale = Vector2(200, 16)
+texture = ExtResource("8_puvxr")
+script = ExtResource("9_mps4m")
+
+[node name="Mana" type="Sprite2D" parent="."]
+modulate = Color(0.0941176, 0.419608, 0.65098, 1)
+position = Vector2(146, 118)
+scale = Vector2(200, 16)
+texture = ExtResource("8_puvxr")
+centered = false
+script = ExtResource("11_amqcw")
+
 [node name="HpBase" parent="." instance=ExtResource("8_kb2av")]
 position = Vector2(130, -53)
+scale = Vector2(200, 16)
 
 [node name="Hp" parent="." instance=ExtResource("9_85r5b")]
 modulate = Color(0.133333, 0.521569, 0.243137, 1)
 position = Vector2(26, -6.00002)
+scale = Vector2(200, 16)
 
 [node name="InitBase" parent="." instance=ExtResource("10_f8ihi")]
 position = Vector2(297, -30)
+scale = Vector2(200, 16)
 
 [node name="Init" parent="." instance=ExtResource("11_fcnsn")]
-position = Vector2(30, -101)
+position = Vector2(32, -109)
+scale = Vector2(200, 16)
 
 [node name="ArmorText" parent="." instance=ExtResource("12_2aaxl")]
 offset_left = 258.0
 offset_top = -15.0
-offset_right = 308.0
+offset_right = 278.0
 offset_bottom = 15.0
+text = "10
+"
+horizontal_alignment = 1
+
+[node name="ManaText" parent="." instance=ExtResource("12_2aaxl")]
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 100.0
+offset_bottom = 30.0
+text = "100/100
+"
+horizontal_alignment = 1
+script = ExtResource("15_mmsl4")
+
+[node name="HpText" parent="." instance=ExtResource("12_2aaxl")]
+offset_left = 331.0
+offset_top = 68.0
+offset_right = 431.0
+offset_bottom = 98.0
+text = "100/100
+"
+horizontal_alignment = 1
+script = ExtResource("16_omrdh")
 
 [node name="UIController" type="Node" parent="."]
-script = ExtResource("13_sa0jl")
+script = ExtResource("17_7agbf")
+
+[node name="OutLine" type="Node" parent="UIController"]
+script = ExtResource("18_s2tar")
+
+[node name="BuffDebuffList" parent="." instance=ExtResource("14_45jvh")]
+
+[node name="LevelTable" parent="." instance=ExtResource("15_w25l3")]
+
+[node name="SkillList" type="Node" parent="."]
+script = ExtResource("17_jn0gg")
+
+[node name="AbilityStats" type="Node" parent="."]
+script = ExtResource("18_3g232")
+
+[node name="PosibleCharClasses" type="Node" parent="."]
 
 [connection signal="input_event" from="Paladin" to="." method="OnPaladinInputEvent"]
 [connection signal="mouse_entered" from="Paladin" to="." method="OnPaladinMouseEntered"]
-[connection signal="mouse_entered" from="Paladin" to="Paladin" method="OnMouseEntered"]
 [connection signal="mouse_exited" from="Paladin" to="." method="OnPaladinMouseExited"]
 [connection signal="input_event" from="Slime" to="." method="OnSlimeInputEvent"]
 [connection signal="mouse_entered" from="Slime" to="." method="OnSlimeMouseEntered"]

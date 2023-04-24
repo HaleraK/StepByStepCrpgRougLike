@@ -7,7 +7,9 @@ public partial class Character : Node2D
     private string _id;
     private CharacterStats _stats;
 
-    [Export]  public float Hp { get; set; } = 80;
+    [Export] public int PositionMarker { get; set; } = 1;
+
+    [Export] public float Hp { get; set; } = 80;
     [Export] public float HpMax { get; set; }  = 100; //имеет смысл сделать массив с
                                                       //максимальными значениями зависимым от уровня
     [Export] public float Mana { get; set; }  = 100;
@@ -22,9 +24,11 @@ public partial class Character : Node2D
     [Export] public float Initiative { get; set; } = 8;
     public float InitiativeCurrent { get; set; } = 0;
     [Export] public float InitiativeMax { get; set; } = 100;
-    [Export] public float CritRate { get; set; } = 0;
-    [Export] public float CritAtk { get; set; } = 140;
+    [Export] public float CritRate { get; set; } = 5;
+    [Export] public float CritAtk { get; set; } = 50;
     [Export] public int LVL { get; set; } = 1;
+    public bool Alive = true;
+    [Export] public bool HaveMana = true;
     
 
     [Export] public string Type { get; set; } = "";
@@ -51,63 +55,24 @@ public partial class Character : Node2D
     private string _color;
 
     private UIController _uiController;
+    private Control _control;
 
     public Action<float> DamageTaken { get; set; }
     public Action<float> InitChanged { get; set; }
-
-    public class AbilityStats
-    {
-        public class Target
-        {
-            private int _posiblePos;
-            private int _priority;
-            public Target(int posiblePos, int priority)
-            {
-                _posiblePos = posiblePos;
-                _priority = priority;
-            }
-            public Target()
-            {
-                
-            }
-        }
-        private float _damage;
-        private float _heal;
-        private string _buffDebuffName;
-
-        public AbilityStats(float damage, float heal, string buffDebuff)
-        {
-            _damage = damage;
-            _heal = heal;
-            _buffDebuffName = buffDebuff;
-        }
-
-        public AbilityStats()
-        {
-            
-        }
-
-    }
+    public Action<float> ManaChanged { get; set; }
+    public Action<Character> InitChangedTo100 { get; set; }
 
     public override void _Ready()
     {
         _uiController = GetNode<UIController>("UIController");
+        _control = GetNode<Control>("../../Control");
     }
 
     public override void _Process(double delta)
     {
         InitiativeCounter(delta);
         SetOutlineMode((float)delta);
-
-        switch (NameClass)
-        {
-            case "Paladin":
-                PaladinControler();
-                break;
-            case "Slime":
-                SlimeControler();
-                break;
-        }
+        IsAlive();
     }
 
     public void InitiativeCounter(double delta)
@@ -121,15 +86,16 @@ public partial class Character : Node2D
 
         if (InitiativeCurrent >= InitiativeMax)
         {
-            InitiativeCurrent = 100;
+            InitiativeCurrent = InitiativeMax;
             PauseForAction = true;
             InitChanged.Invoke(InitiativeCurrent);
+            InitChangedTo100.Invoke(this);
             return;
         }
         InitChanged.Invoke(InitiativeCurrent);
     }
 
-    public void LinkAbility()
+    public void LinkAbilities()
     {
 
     }
@@ -139,9 +105,11 @@ public partial class Character : Node2D
     //posible targets
     //heal / atk / buff / debuf
     //
-    public void NormalAtk()
+    public AbilityStats NormalAtk()
     {
-
+        var charClass = GetNode(NameClass);
+        AbilityStats stats = (AbilityStats)charClass.Call("NormalAttack");
+        return stats;
     }
 
     public void Ability1()
@@ -164,15 +132,43 @@ public partial class Character : Node2D
 
     }
 
+    // статы можно будет улучшать с помощью поинтов
+    // можно улучшать hp mana armor atk initiative critRate critAtk
+    public void TakeDamage(float damage)
+    {
+        damage -= Armor;
+        if (damage <= 0)
+        {
+            damage = 0;
+        }
+        Hp -= damage;
+        DamageTaken.Invoke(Hp);
+    }
+
+    public float GiveDamage()
+    {
+        float damage = Atk;
+        return damage;
+    }
+
+    public void IsAlive()
+    {
+        if (Hp <= 0)
+        {
+            Alive = false;
+            Hp = 0;
+            DamageTaken.Invoke(Hp);
+        }
+    }
+
     public void OnEnemyClick(InputEvent ev)
     {
         var btn = ev as InputEventMouseButton;
-        if (((btn != null) && ((int)MouseButton.Left == 1)))
+        if (((btn != null) && ((int)MouseButton.Left == 1)) && _control.Turn)
         {
-            var node = GetNode("../../Control");
-            float damage = (float)node.Get("Damage");
-            TakeDamage(-damage);
-            node.Call("EndTurn");
+            AbilityStats statsTaken = _control.GetAbilityStats();
+            TakeDamage((float)statsTaken.Damage);
+            _control.EndTurn();
         }
     }
 
@@ -221,11 +217,6 @@ public partial class Character : Node2D
     public void OnSlimeMouseExited()
     {
         OnMouseExit();
-    }
-
-    public string GetNodeName() 
-    { 
-        return Name;
     }
 
     //оулайн желтый, зеленый, красный, моргающий, красно-зереный (мегающий)
@@ -286,29 +277,4 @@ public partial class Character : Node2D
     {
         return a += 1 * delta;
     }
-
-    public void TakeDamage(float damage)
-    {
-        Hp += damage;
-        DamageTaken.Invoke(Hp);
-    }
-
-    public float GiveDamage()
-    {
-        float damage = Atk;
-        return damage;
-    }
-
-    public void PaladinControler()
-    {
-
-    }
-
-    public void SlimeControler()
-    {
-
-    }
-
-    // статы можно будет улучшать с помощью поинтов
-    // можно улучшать hp mana armor atk initiative critRate critAtk
 }

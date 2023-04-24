@@ -25,12 +25,20 @@ public partial class HpBase : Sprite2D
 
     public void SetPosition() 
     {
+        float n = 60;
+        if (_character.HaveMana == true)
+        {
+            n = 60;
+        } else
+        {
+            n = 40;
+        }
+
         var node = GetNode<AnimatedSprite2D>("../" + NameClass + "/AnimatedSprite2D");
         var x = (float)node.Call("GetPosX");
         var y = (float)node.Call("GetPosY");
-        var sizeX = (float)node.Call("GetSizeX");
         var sizeY = (float)node.Call("GetSizeY");
-        Position = new Vector2(x, y -(sizeY / 2) - 50);
+        Position = new Vector2(x, y -(sizeY / 2) - n);
     }
 
     public float GetSizeX()

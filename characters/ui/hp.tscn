@@ -1,4 +1,4 @@
-[gd_scene load_steps=3 format=3]
+[gd_scene load_steps=3 format=3 uid="uid://fg8jxomt5edv"]
 
 [ext_resource type="Texture2D" uid="uid://dk1wxsag7u15y" path="res://characters/whitePixel.png" id="1_4rbcv"]
 [ext_resource type="Script" path="res://characters/ui/Hp.cs" id="2_8gyc0"]

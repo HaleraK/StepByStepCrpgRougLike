@@ -84,26 +84,49 @@ public partial class ButtonAbility : Button
 
 	public void NormalAtk() 
 	{
-        _control.SetAbility(_whoseTurn.NormalAtk());
+        _control.Ability = _control.WhoseTurn.NormalAtk();
+        if ("Self" == _control.Ability.TargetType)
+        {
+            _control.WhoseTurn.InputAbility();
+        }
     }
 
     public void Ability1()
     {
-        _control.SetAbility(_whoseTurn.Ability1());
+        _control.Ability = _control.WhoseTurn.Ability1();
+        if ("Self" == _control.Ability.TargetType)
+        {
+            _control.WhoseTurn.InputAbility();
+        }
     }
 
     public void Ability2()
     {
-        _control.SetAbility(_whoseTurn.Ability2());
+        _control.Ability = _control.WhoseTurn.Ability2();
+        if ("Self" == _control.Ability.TargetType)
+        {
+            _control.WhoseTurn.InputAbility();
+        }
+
     }
 
     public void Ability3()
     {
-        _control.SetAbility(_whoseTurn.Ability3());
+        _control.Ability = _control.WhoseTurn.Ability3();
+        if ("Self" == _control.Ability.TargetType)
+        {
+            _control.WhoseTurn.InputAbility();
+        }
+
     }
 
     public void Ability4()
     {
-        _control.SetAbility(_whoseTurn.Ability4());
+        _control.Ability = _control.WhoseTurn.Ability4();
+        if ("Self" == _control.Ability.TargetType)
+        {
+            _control.WhoseTurn.InputAbility();
+        }
+
     }
 }

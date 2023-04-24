@@ -66,10 +66,12 @@ public partial class Character : Node2D
     public Action<float> ManaChanged { get; set; }
     public Action<Character> InitChangedTo100 { get; set; }
 
+
     public override void _Ready()
     {
         _uiController = GetNode<UIController>("UIController");
         _control = GetNode<Control>("../../Control");
+
     }
 
     public override void _Process(double delta)
@@ -106,10 +108,13 @@ public partial class Character : Node2D
 
     public void EndTurn()
     {
+        IsAlive();
         RestorManaPerTurn();
         RestorHpPerTurn();
         SetInitTo0();
-        IsAlive();
+
+        var charClass = GetNode(NameClass);
+        charClass.Call("ecrementCoolDowns");
     }
 
 
@@ -241,12 +246,33 @@ public partial class Character : Node2D
         }
     }
 
-    public void OnClick2(InputEvent ev)
+    public void InputAbility()
     {
-        var btn = ev as InputEventMouseButton;
-        if (((btn != null) && ((int)MouseButton.Left == 1)))
+        Ability statsTaken = _control.Ability;
+
+        if (!statsTaken.Selected)
         {
-            GD.Print("GG");
+            return;
+        }
+
+        if (statsTaken == null)
+        {
+            return;
+        }
+        switch (statsTaken.Type)
+        {
+            case ("Atk"):
+                AtkInput(statsTaken);
+                break;
+            case ("Heal"):
+                HealInput(statsTaken);
+                break;
+            case ("BuffDebuff"):
+                BuffDebuffInput(statsTaken);
+                break;
+            default:
+                _control.EndTurn();
+                break;
         }
     }
 
@@ -255,28 +281,7 @@ public partial class Character : Node2D
         var btn = ev as InputEventMouseButton;
         if (((btn != null) && ((int)MouseButton.Left == 1)) && _control.Turn)
         {
-            Ability statsTaken = _control.GetAbility();
-
-            if (statsTaken == null) 
-            {
-                return;
-            }
-            switch (statsTaken.Type)
-            {
-                case ("Atk"):
-                    AtkInput(statsTaken);
-                    break;
-                case ("Heal"):
-                    HealInput(statsTaken);
-                    break;
-                case ("BuffDebuff"):
-                    BuffDebuffInput(statsTaken);
-                    break;
-                default:
-                    _control.EndTurn();
-                    break;
-            }
-
+            InputAbility();
         }
     }
 
@@ -315,9 +320,9 @@ public partial class Character : Node2D
         
     }
 
-    public void SelfInput(Ability statsTaken)
+    public void SelfInput()
     {
-        
+        InputAbility();
     }
 
     public void AnyInput(Ability statsTaken)
@@ -429,5 +434,13 @@ public partial class Character : Node2D
     float Timer(float delta, float a)
     {
         return a += 1 * delta;
+    }
+
+    public float GetSizeY()
+    {
+        var node = GetNode(NameClass + "/AnimatedSprite2D");
+        var y = (float)node.Call("GetSizeY");
+        
+        return y;
     }
 }

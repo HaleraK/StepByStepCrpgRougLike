@@ -1,53 +1,51 @@
-[gd_scene load_steps=5 format=3 uid="uid://dt7v8ws8ue2lh"]
+[gd_scene load_steps=6 format=3 uid="uid://dt7v8ws8ue2lh"]
 
 [ext_resource type="PackedScene" uid="uid://dc6ubyq5aptxr" path="res://Locations/fight/point.tscn" id="1_4wcwk"]
 [ext_resource type="PackedScene" uid="uid://daroc00a100d" path="res://characters/character.tscn" id="2_4ed7o"]
 [ext_resource type="PackedScene" uid="uid://blfmloirtcx0i" path="res://ui/buttons/buttonAbility.tscn" id="3_kbrep"]
 [ext_resource type="PackedScene" uid="uid://cs3nv7qtwlmgu" path="res://characters/control/control.tscn" id="4_lf63b"]
+[ext_resource type="Script" path="res://Locations/fight/PositionManager.cs" id="5_ptwko"]
 
 [node name="MainSceneFight" type="Node2D"]
 
-[node name="ConteinerChars" type="Node" parent="."]
+[node name="ConteinerPointChar" type="Node" parent="."]
 
-[node name="Point" parent="ConteinerChars" instance=ExtResource("1_4wcwk")]
+[node name="Point1" parent="ConteinerPointChar" instance=ExtResource("1_4wcwk")]
+position = Vector2(1065, 603)
+
+[node name="Point2" parent="ConteinerPointChar" instance=ExtResource("1_4wcwk")]
 position = Vector2(419, 349)
 
-[node name="Point2" parent="ConteinerChars" instance=ExtResource("1_4wcwk")]
+[node name="Point3" parent="ConteinerPointChar" instance=ExtResource("1_4wcwk")]
 position = Vector2(419, 349)
 
-[node name="Point3" parent="ConteinerChars" instance=ExtResource("1_4wcwk")]
+[node name="Point4" parent="ConteinerPointChar" instance=ExtResource("1_4wcwk")]
 position = Vector2(419, 349)
 
-[node name="Point4" parent="ConteinerChars" instance=ExtResource("1_4wcwk")]
+[node name="Point5" parent="ConteinerPointChar" instance=ExtResource("1_4wcwk")]
+position = Vector2(838, 698)
+
+[node name="Point6" parent="ConteinerPointChar" instance=ExtResource("1_4wcwk")]
 position = Vector2(419, 349)
 
-[node name="Point5" parent="ConteinerChars" instance=ExtResource("1_4wcwk")]
+[node name="ConteinerPointMob" type="Node" parent="."]
+
+[node name="Point1" parent="ConteinerPointMob" instance=ExtResource("1_4wcwk")]
+position = Vector2(973, 351)
+
+[node name="Point2" parent="ConteinerPointMob" instance=ExtResource("1_4wcwk")]
+position = Vector2(869, 407)
+
+[node name="Point3" parent="ConteinerPointMob" instance=ExtResource("1_4wcwk")]
+position = Vector2(961, 435)
+
+[node name="Point4" parent="ConteinerPointMob" instance=ExtResource("1_4wcwk")]
 position = Vector2(419, 349)
 
-[node name="ConteinerMobs" type="Node" parent="."]
-
-[node name="Point" parent="ConteinerMobs" instance=ExtResource("1_4wcwk")]
+[node name="Point5" parent="ConteinerPointMob" instance=ExtResource("1_4wcwk")]
 position = Vector2(419, 349)
 
-[node name="Point2" parent="ConteinerMobs" instance=ExtResource("1_4wcwk")]
-position = Vector2(419, 349)
-
-[node name="Point3" parent="ConteinerMobs" instance=ExtResource("1_4wcwk")]
-position = Vector2(419, 349)
-
-[node name="Point4" parent="ConteinerMobs" instance=ExtResource("1_4wcwk")]
-position = Vector2(419, 349)
-
-[node name="Point5" parent="ConteinerMobs" instance=ExtResource("1_4wcwk")]
-position = Vector2(419, 349)
-
-[node name="Point6" parent="ConteinerMobs" instance=ExtResource("1_4wcwk")]
-position = Vector2(419, 349)
-
-[node name="Point7" parent="ConteinerMobs" instance=ExtResource("1_4wcwk")]
-position = Vector2(419, 349)
-
-[node name="Point8" parent="ConteinerMobs" instance=ExtResource("1_4wcwk")]
+[node name="Point6" parent="ConteinerPointMob" instance=ExtResource("1_4wcwk")]
 position = Vector2(419, 349)
 
 [node name="ConteinerOfChars" type="Node" parent="."]
@@ -59,8 +57,48 @@ Armor = 5.0
 Type = "Character"
 NameClass = "Paladin"
 
+[node name="Character4" parent="ConteinerOfChars" instance=ExtResource("2_4ed7o")]
+position = Vector2(172, 702)
+PositionMarker = 2
+Hp = 100.0
+Armor = 5.0
+Type = "Character"
+NameClass = "Paladin"
+
+[node name="Character6" parent="ConteinerOfChars" instance=ExtResource("2_4ed7o")]
+position = Vector2(172, 702)
+PositionMarker = 3
+Hp = 100.0
+Armor = 5.0
+Type = "Character"
+NameClass = "Paladin"
+
+[node name="Character7" parent="ConteinerOfChars" instance=ExtResource("2_4ed7o")]
+position = Vector2(172, 702)
+PositionMarker = 4
+Hp = 100.0
+Armor = 5.0
+Type = "Character"
+NameClass = "Paladin"
+
+[node name="Character8" parent="ConteinerOfChars" instance=ExtResource("2_4ed7o")]
+position = Vector2(172, 702)
+PositionMarker = 5
+Hp = 100.0
+Armor = 5.0
+Type = "Character"
+NameClass = "Paladin"
+
+[node name="Character5" parent="ConteinerOfChars" instance=ExtResource("2_4ed7o")]
+position = Vector2(172, 702)
+PositionMarker = 6
+Hp = 100.0
+Armor = 5.0
+Type = "Character"
+NameClass = "Paladin"
+
 [node name="Character3" parent="ConteinerOfChars" instance=ExtResource("2_4ed7o")]
-position = Vector2(529, 458)
+position = Vector2(1007, 294)
 Armor = 2.0
 Atk = 20.0
 Initiative = 4.0
@@ -69,7 +107,52 @@ Type = "Mob"
 NameClass = "Slime"
 
 [node name="Character2" parent="ConteinerOfChars" instance=ExtResource("2_4ed7o")]
-position = Vector2(888, 278)
+position = Vector2(1090, 554)
+PositionMarker = 2
+Hp = 70.0
+Armor = 3.0
+Atk = 20.0
+Initiative = 6.0
+HaveMana = false
+Type = "Mob"
+NameClass = "Slime"
+
+[node name="Character9" parent="ConteinerOfChars" instance=ExtResource("2_4ed7o")]
+position = Vector2(1090, 554)
+PositionMarker = 3
+Hp = 70.0
+Armor = 3.0
+Atk = 20.0
+Initiative = 6.0
+HaveMana = false
+Type = "Mob"
+NameClass = "Slime"
+
+[node name="Character10" parent="ConteinerOfChars" instance=ExtResource("2_4ed7o")]
+position = Vector2(1090, 554)
+PositionMarker = 4
+Hp = 70.0
+Armor = 3.0
+Atk = 20.0
+Initiative = 6.0
+HaveMana = false
+Type = "Mob"
+NameClass = "Slime"
+
+[node name="Character11" parent="ConteinerOfChars" instance=ExtResource("2_4ed7o")]
+position = Vector2(1090, 554)
+PositionMarker = 5
+Hp = 70.0
+Armor = 3.0
+Atk = 20.0
+Initiative = 6.0
+HaveMana = false
+Type = "Mob"
+NameClass = "Slime"
+
+[node name="Character12" parent="ConteinerOfChars" instance=ExtResource("2_4ed7o")]
+position = Vector2(1090, 554)
+PositionMarker = 6
 Hp = 70.0
 Armor = 3.0
 Atk = 20.0
@@ -80,26 +163,12 @@ NameClass = "Slime"
 
 [node name="ContainerOfActionButtons" type="Node" parent="."]
 
-[node name="Ability4" parent="ContainerOfActionButtons" instance=ExtResource("3_kbrep")]
-offset_left = 642.0
-offset_top = 515.0
-offset_right = 1674.0
-offset_bottom = 1547.0
-Type = "Ability4"
-
-[node name="Ability3" parent="ContainerOfActionButtons" instance=ExtResource("3_kbrep")]
-offset_left = 736.0
-offset_top = 516.0
-offset_right = 1768.0
-offset_bottom = 1548.0
-Type = "Ability3"
-
-[node name="Ability2" parent="ContainerOfActionButtons" instance=ExtResource("3_kbrep")]
-offset_left = 832.0
-offset_top = 502.0
-offset_right = 1864.0
-offset_bottom = 1534.0
-Type = "Ability2"
+[node name="NormalAtk" parent="ContainerOfActionButtons" instance=ExtResource("3_kbrep")]
+offset_left = 1030.0
+offset_top = 512.0
+offset_right = 2062.0
+offset_bottom = 1544.0
+Type = "NormalAtk"
 
 [node name="Ability1" parent="ContainerOfActionButtons" instance=ExtResource("3_kbrep")]
 offset_left = 927.0
@@ -108,12 +177,29 @@ offset_right = 1959.0
 offset_bottom = 1539.0
 Type = "Ability1"
 
-[node name="NormalAtk" parent="ContainerOfActionButtons" instance=ExtResource("3_kbrep")]
-offset_left = 1030.0
-offset_top = 512.0
-offset_right = 2062.0
-offset_bottom = 1544.0
-Type = "NormalAtk"
+[node name="Ability2" parent="ContainerOfActionButtons" instance=ExtResource("3_kbrep")]
+offset_left = 832.0
+offset_top = 502.0
+offset_right = 1864.0
+offset_bottom = 1534.0
+Type = "Ability2"
+
+[node name="Ability3" parent="ContainerOfActionButtons" instance=ExtResource("3_kbrep")]
+offset_left = 736.0
+offset_top = 516.0
+offset_right = 1768.0
+offset_bottom = 1548.0
+Type = "Ability3"
+
+[node name="Ability4" parent="ContainerOfActionButtons" instance=ExtResource("3_kbrep")]
+offset_left = 642.0
+offset_top = 515.0
+offset_right = 1674.0
+offset_bottom = 1547.0
+Type = "Ability4"
 
 [node name="Control" parent="." instance=ExtResource("4_lf63b")]
 editor_description = "change to controll"
+
+[node name="PositionManager" type="Node" parent="."]
+script = ExtResource("5_ptwko")

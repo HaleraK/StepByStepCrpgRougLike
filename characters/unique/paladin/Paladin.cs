@@ -34,6 +34,22 @@ public partial class Paladin : Area2D
         _abilitiesClass[4] = new Ability("SelfHeal");
     }
 
+	public void DecrementCoolDowns()
+	{
+		foreach (var ability in _abilitiesClass)
+		{
+			if (ability.CoolDown > 0) 
+			{ 
+				ability.CoolDown--;
+			} else
+			{
+				ability.OnCoolDown = false;
+
+
+            }
+		}
+	}
+
     public void TougleVisible()
 	{
 		Visible = !Visible;
@@ -75,6 +91,7 @@ public partial class Paladin : Area2D
     public Ability NormalAttack()
 	{
 		Ability stats = _abilitiesClass[0];
+        stats.Selected = true;
         stats.Type = "Atk";
         stats.TargetType = "Mob";
         stats.CharSource = _character;
@@ -96,6 +113,14 @@ public partial class Paladin : Area2D
 	public Ability TripleAtk()
 	{
         Ability stats = _abilitiesClass[1];
+
+        if (_abilitiesClass[1].CoolDown > 0 && _abilitiesClass[1].OnCoolDown)
+		{
+			return stats;
+		}
+
+		_abilitiesClass[1].CoolDown = 3;
+        stats.Selected = true;
         stats.Type = "Atk";
         stats.TargetType = "Mob";
         stats.CharSource = _character;
@@ -118,6 +143,7 @@ public partial class Paladin : Area2D
 	public Ability ManaAtk()
 	{
         Ability stats = _abilitiesClass[2];
+        stats.Selected = true;
         stats.Type = "Atk";
         stats.TargetType = "Mob";
         stats.CharSource = _character;
@@ -168,6 +194,7 @@ public partial class Paladin : Area2D
 	public Ability SelfHeal()
 	{
         Ability stats = _abilitiesClass[4];
+        stats.Selected = true;
         stats.Type = "Heal";
         stats.TargetType = "Self";
         stats.CharSource = _character;

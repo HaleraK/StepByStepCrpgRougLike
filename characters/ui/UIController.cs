@@ -31,6 +31,16 @@ public partial class UIController : Node
         _armorText = GetNode<ArmorText>("../ArmorText");
         _manaText = GetNode<ManaText>("../ManaText");
         _hpText = GetNode<HpText>("../HpText");
+
+        _initBar = GetNode<Init>("../Init");
+        _hpBarBase = GetNode<HpBase>("../HpBase");
+        _hpBar = GetNode<Hp>("../Hp");
+        _manaBarBase = GetNode<ManaBase>("../ManaBase");
+        _manaBar = GetNode<Mana>("../Mana");
+        _armorText = GetNode<ArmorText>("../ArmorText");
+        _manaText = GetNode<ManaText>("../ManaText");
+        _hpText = GetNode<HpText>("../HpText");
+
         UnHideNode();
         SetCharUiPos();
     }
@@ -74,4 +84,5 @@ public partial class UIController : Node
         _manaBar.SetSizeX();
         _manaText.SetText();
     }
+
 }

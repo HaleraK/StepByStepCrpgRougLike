@@ -59,7 +59,7 @@ public partial class LevelTable : Node
     public override void _Ready()
 	{
         CreateTableAndFieldIt();
-        ConsolOut();
+        //ConsolOut();
 
 
 

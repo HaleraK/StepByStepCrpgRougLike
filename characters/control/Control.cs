@@ -8,8 +8,8 @@ public partial class Control : Node
     public bool Turn = false;
     public string TypeTurn;
 
-    private Ability _ability;
-    private Character _whoseTurn;
+    public Ability Ability { get; set; }
+    public Character WhoseTurn { get; set; }
 
     private readonly static string[] POSIBLE_TYPES
         = { "NormalAtk", "Ability1", "Ability2", "Ability3", "Ability4" };
@@ -63,29 +63,19 @@ public partial class Control : Node
        
     }
 
-    public void SetAbility(Ability stats) 
-    { 
-        _ability = stats;
-    }
-
-    public Ability GetAbility()
-    {
-        return _ability;
-    }
-
     public void MobTurn()
     {
         //заглушка
-        Ability statsTaken = _whoseTurn.NormalAtk();
+        Ability statsTaken = WhoseTurn.NormalAtk();
         GetNode("../").GetNode<Character>("ConteinerOfChars/Character").TakeDamage((float)statsTaken.Damage);
         EndTurn();
     }
 
     public void StartTurn(Character character)
     {
-        _whoseTurn = character;
+        WhoseTurn = character;
 
-        SetButtonsSkin(_whoseTurn);
+        SetButtonsSkin(WhoseTurn);
 
         Pause = true;
         Turn = true;
@@ -100,7 +90,7 @@ public partial class Control : Node
             case "Character":
                 foreach (var but in _buttonsAbility)
                 {
-                    but.SetWhoseTurn(_whoseTurn, TypeTurn);
+                    but.SetWhoseTurn(WhoseTurn, TypeTurn);
                 }
                 break;
         }
@@ -109,11 +99,11 @@ public partial class Control : Node
     public void EndTurn()
     {
         Turn = false;
-        _whoseTurn.EndTurn();
+        WhoseTurn.EndTurn();
         Pause = false;
         TypeTurn = "";
-        _whoseTurn = null;
-        _ability = null;
+        WhoseTurn = null;
+        Ability = null;
         PauseAll(Pause);
 
         Array.Resize(ref _posibleTargets, 0);
@@ -126,25 +116,25 @@ public partial class Control : Node
 
     public void SetButtonsSkin(Character character)
     {
-        string nameClass = _whoseTurn.NameClass;
+        string nameClass = WhoseTurn.NameClass;
 
-        Ability ability = _whoseTurn.NormalAtk() as Ability;
+        Ability ability = WhoseTurn.NormalAtk() as Ability;
         string abilityName = ability.NameAbility;
         _buttonsAbility[0].SetSkin(nameClass, abilityName);
 
-        ability = _whoseTurn.Ability1() as Ability;
+        ability = WhoseTurn.Ability1() as Ability;
         abilityName = ability.NameAbility;
         _buttonsAbility[1].SetSkin(nameClass, abilityName);
 
-        ability = _whoseTurn.Ability2() as Ability;
+        ability = WhoseTurn.Ability2() as Ability;
         abilityName = ability.NameAbility;
         _buttonsAbility[2].SetSkin(nameClass, abilityName);
 
-        ability = _whoseTurn.Ability3() as Ability;
+        ability = WhoseTurn.Ability3() as Ability;
         abilityName = ability.NameAbility;
         _buttonsAbility[3].SetSkin(nameClass, abilityName);
 
-        ability = _whoseTurn.Ability4() as Ability;
+        ability = WhoseTurn.Ability4() as Ability;
         abilityName = ability.NameAbility;
         _buttonsAbility[4].SetSkin(nameClass, abilityName);
     }

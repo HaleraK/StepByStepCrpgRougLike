@@ -29,7 +29,9 @@ public partial class Ability : Node
     private Target[] _targets;
     public int TargetCount { get; set; }
     public int CountActions { get; set; } = 1;
+    public bool Selected { get; set; } = false;
     public int CoolDown { get; set; } = 0;
+    public bool OnCoolDown { get; set; } = false;
 
     public float Damage { get; set; } = 0;
     public float Heal { get; set; } = 0;

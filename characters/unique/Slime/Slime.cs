@@ -5,7 +5,7 @@ using System;
 public partial class Slime : Area2D
 {
     private Character _character;
-    private AbilityStats _abilityStats;
+    private Ability _abilityStats;
     
     public override void _Ready()
 	{
@@ -22,9 +22,33 @@ public partial class Slime : Area2D
         Visible = !Visible;
     }
 
-    public AbilityStats NormalAttack()
+    public Ability Ability1()
     {
-        AbilityStats stats = new("Atk", "Character");
+        return NormalAttack();
+
+    }
+
+    public Ability Ability2()
+    {
+        return NormalAttack();
+
+    }
+
+    public Ability Ability3()
+    {
+        return NormalAttack();
+
+    }
+
+    public Ability Ability4()
+    {
+        return NormalAttack();
+
+    }
+
+    public Ability NormalAttack()
+    {
+        Ability stats = new("Atk", "Character");
         stats.TargetCount = 1;
 
         /*

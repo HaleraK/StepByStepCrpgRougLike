@@ -62,6 +62,7 @@ NameClass = "Paladin"
 [node name="Character3" parent="ConteinerOfChars" instance=ExtResource("2_4ed7o")]
 position = Vector2(529, 458)
 Armor = 2.0
+Atk = 20.0
 Initiative = 4.0
 HaveMana = false
 Type = "Mob"
@@ -71,6 +72,7 @@ NameClass = "Slime"
 position = Vector2(888, 278)
 Hp = 70.0
 Armor = 3.0
+Atk = 20.0
 Initiative = 6.0
 HaveMana = false
 Type = "Mob"

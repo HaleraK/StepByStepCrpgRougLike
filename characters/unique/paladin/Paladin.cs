@@ -8,48 +8,79 @@ public partial class Paladin : Area2D
 {
 	private string _currentAura;
 	private Character _character;
-	private AbilityStats _abilityStats;
+	private Ability _ability;
+    private Ability[] _abilitiesClass;
 
 
     public override void _Ready()
 	{
         _character = GetParent<Character>();
-	}
+		CreateAbilitiesClass();
+
+    }
 
 	public override void _Process(double delta)
 	{
 	}
+
+	public void CreateAbilitiesClass()
+	{
+		Array.Resize(ref _abilitiesClass, 5);
+
+		_abilitiesClass[0] = new Ability("NormalAtk");
+        _abilitiesClass[1] = new Ability("TripleAtk");
+        _abilitiesClass[2] = new Ability("ManaAtk");
+        _abilitiesClass[3] = new Ability("NormalAtk");
+        _abilitiesClass[4] = new Ability("SelfHeal");
+    }
 
     public void TougleVisible()
 	{
 		Visible = !Visible;
 	}
 
-	//АКТИВИ (1 + 13)
-	//обычная атака всегда доступна
-	//Всего доступно 12 абилок
-	//За каждый уровень можно 1 абилку
-	//На 10 уровне даються все оставшиися абилки
-	//сняражать в бой можно 4 абилки не считая обычной атаки
-
-	//Удар света
-	//обычная атака 100% атаки
-	public AbilityStats NormalAttack()
+	public Ability Ability1()
 	{
-        AbilityStats stats = new("Atk","Mob");
-		stats.TargetCount = 1;
+		return TripleAtk();
 
-		/*
-		int m = 1;
-		for (int i = 0; i < 6; i++)
-		{
-            stats.AddTarget(i + 1 , m);
-			if (m % 2 == 1)
-			{
-				m++;
-			}
-        }
-		*/
+    }
+
+    public Ability Ability2()
+    {
+        return ManaAtk();
+
+    }
+
+    public Ability Ability3()
+    {
+        return TripleAtk();
+
+    }
+
+    public Ability Ability4()
+    {
+        return SelfHeal();
+
+    }
+
+    //АКТИВИ (1 + 13)
+    //обычная атака всегда доступна
+    //Всего доступно 12 абилок
+    //За каждый уровень можно 1 абилку
+    //На 10 уровне даються все оставшиися абилки
+    //сняражать в бой можно 4 абилки не считая обычной атаки
+
+    //Удар света
+    //обычная атака 100% атаки
+    public Ability NormalAttack()
+	{
+		Ability stats = _abilitiesClass[0];
+        stats.Type = "Atk";
+        stats.TargetType = "Mob";
+        stats.CharSource = _character;
+        stats.TargetCount = 1;
+		stats.CountActions = 1;
+        stats.CoolDown = 0;
 
         float dammage = 0;
 		dammage += _character.Atk;
@@ -62,18 +93,47 @@ public partial class Paladin : Area2D
 	//Тройное правосудие
 	//3 атаки со 80% силы
 	//откат 3 хода
-	public void TripleJutice()
+	public Ability TripleAtk()
 	{
+        Ability stats = _abilitiesClass[1];
+        stats.Type = "Atk";
+        stats.TargetType = "Mob";
+        stats.CharSource = _character;
+        stats.TargetCount = 1;
+        stats.CountActions = 3;
+		stats.CoolDown = 3;
 
-	}
+        float dammage = 0;
+        dammage += _character.Atk;
+        dammage *= (float)0.8;
+
+        stats.Damage = dammage;
+
+        return stats;
+    }
 
 	//Божественное вмешательство
 	//Луч света который бьет любую цель 150% силы
 	//мана 30%
-	public void DivineIntervention()
+	public Ability ManaAtk()
 	{
+        Ability stats = _abilitiesClass[2];
+        stats.Type = "Atk";
+        stats.TargetType = "Mob";
+        stats.CharSource = _character;
+        stats.TargetCount = 1;
+        stats.CountActions = 1;
+        stats.CoolDown = 0;
+		stats.ManaCost = 40;
 
-	}
+        float dammage = 0;
+        dammage += _character.Atk;
+        dammage *= (float)0.8;
+
+        stats.Damage = dammage;
+
+        return stats;
+    }
 
 	//Атака короля
 	//Вы кидаете молот по цели, у которой осталось 25% хп
@@ -105,10 +165,25 @@ public partial class Paladin : Area2D
 	//Мольба
 	//вы востонавливаете 60% манны и 30% хп
 	//откат 4 хода
-	public void Entreaty()
+	public Ability SelfHeal()
 	{
+        Ability stats = _abilitiesClass[4];
+        stats.Type = "Heal";
+        stats.TargetType = "Self";
+        stats.CharSource = _character;
+        stats.TargetCount = 1;
+        stats.CountActions = 1;
+        stats.CoolDown = 0;
+        stats.ManaCost = 40;
 
-	}
+        float heal = 0;
+        heal += _character.Atk;
+        heal *= (float)2;
+
+        stats.Heal = heal;
+
+        return stats;
+    }
 
 	//Востоновление
 	//Оживляет недавно падшего союзника с 50% хп

@@ -21,8 +21,8 @@
 [ext_resource type="Script" path="res://characters/ui/HpText.cs" id="16_omrdh"]
 [ext_resource type="Script" path="res://characters/ui/UIController.cs" id="17_7agbf"]
 [ext_resource type="Script" path="res://characters/SkillList.cs" id="17_jn0gg"]
-[ext_resource type="Script" path="res://characters/AbilityStats.cs" id="18_3g232"]
 [ext_resource type="Script" path="res://characters/ui/OutLine.cs" id="18_s2tar"]
+[ext_resource type="Script" path="res://characters/Ability.cs" id="23_46npi"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_f6c0u"]
 shader = ExtResource("3_6m5bc")
@@ -203,8 +203,8 @@ script = ExtResource("18_s2tar")
 [node name="SkillList" type="Node" parent="."]
 script = ExtResource("17_jn0gg")
 
-[node name="AbilityStats" type="Node" parent="."]
-script = ExtResource("18_3g232")
+[node name="Ability" type="Node" parent="."]
+script = ExtResource("23_46npi")
 
 [node name="PosibleCharClasses" type="Node" parent="."]
 

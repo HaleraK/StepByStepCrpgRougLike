@@ -10,9 +10,11 @@ public partial class Character : Node2D
     [Export] public int PositionMarker { get; set; } = 1;
 
     [Export] public float Hp { get; set; } = 80;
+    [Export] public float HpRegen { get; set; } = 10;
     [Export] public float HpMax { get; set; }  = 100; //имеет смысл сделать массив с
                                                       //максимальными значениями зависимым от уровня
     [Export] public float Mana { get; set; }  = 100;
+    [Export] public float ManaRegen { get; set; }  = 10;
     [Export] public float ManaMax { get; set; }  = 100;
 
     [Export] public float Armor { get; set; }  = 10;
@@ -24,8 +26,10 @@ public partial class Character : Node2D
     [Export] public float Initiative { get; set; } = 8;
     public float InitiativeCurrent { get; set; } = 0;
     [Export] public float InitiativeMax { get; set; } = 100;
+
     [Export] public float CritRate { get; set; } = 5;
     [Export] public float CritAtk { get; set; } = 50;
+
     [Export] public int LVL { get; set; } = 1;
     public bool Alive = true;
     [Export] public bool HaveMana = true;
@@ -94,10 +98,39 @@ public partial class Character : Node2D
         }
         InitChanged.Invoke(InitiativeCurrent);
     }
+    public void SetInitTo0()
+    {
+        InitiativeCurrent = 0;
+        PauseForAction = false;
+    }
+
+    public void EndTurn()
+    {
+        RestorManaPerTurn();
+        RestorHpPerTurn();
+        SetInitTo0();
+        IsAlive();
+    }
+
+
+    public void RestorManaPerTurn()
+    {
+        Mana += ManaRegen;
+        IsManaBiggerManaMax();
+        ManaChanged.Invoke(Mana);
+    }
+
+    public void RestorHpPerTurn()
+    {
+        Hp += HpRegen;
+        IsHpBiggerHpMax();
+        DamageTaken.Invoke(Hp);
+    }
 
     public void LinkAbilities()
     {
 
+        
     }
 
     //абилка отдает значения
@@ -105,32 +138,41 @@ public partial class Character : Node2D
     //posible targets
     //heal / atk / buff / debuf
     //
-    public AbilityStats NormalAtk()
+    public Ability NormalAtk()
     {
         var charClass = GetNode(NameClass);
-        AbilityStats stats = (AbilityStats)charClass.Call("NormalAttack");
+        Ability stats = (Ability)charClass.Call("NormalAttack");
         return stats;
     }
 
-    public void Ability1()
+    public Ability Ability1()
     {
-
+        var charClass = GetNode(NameClass);
+        Ability stats = (Ability)charClass.Call("Ability1");
+        return stats;
     }
 
-    public void Ability2()
+    public Ability Ability2()
     {
-
+        var charClass = GetNode(NameClass);
+        Ability stats = (Ability)charClass.Call("Ability2");
+        return stats;
     }
 
-    public void Ability3()
+    public Ability Ability3()
     {
-
+        var charClass = GetNode(NameClass);
+        Ability stats = (Ability)charClass.Call("Ability3");
+        return stats;
     }
 
-    public void Ability4()
+    public Ability Ability4()
     {
-
+        var charClass = GetNode(NameClass);
+        Ability stats = (Ability)charClass.Call("Ability4");
+        return stats;
     }
+
 
     // статы можно будет улучшать с помощью поинтов
     // можно улучшать hp mana armor atk initiative critRate critAtk
@@ -141,14 +183,52 @@ public partial class Character : Node2D
         {
             damage = 0;
         }
-        Hp -= damage;
+        Hp -= MathF.Round(damage);
         DamageTaken.Invoke(Hp);
+    }
+
+    public void TakeHeal(float heal)
+    {
+        Hp += MathF.Round(heal);
+        IsHpBiggerHpMax();
+
+        DamageTaken.Invoke(Hp);
+    }
+
+    public void TakeMana(float mana)
+    {
+        Mana += MathF.Round(mana);
+        IsManaBiggerManaMax();
+
+        ManaChanged.Invoke(Mana);
+    }
+
+    public void IsHpBiggerHpMax()
+    {
+        if (Hp > HpMax)
+        {
+            Hp = HpMax;
+        }
+    }
+
+    public void IsManaBiggerManaMax()
+    {
+        if (Mana > ManaMax)
+        {
+            Mana = ManaMax;
+        }
     }
 
     public float GiveDamage()
     {
         float damage = Atk;
         return damage;
+    }
+
+    public void ManaChange(float mana)
+    {
+        Mana += mana;
+        ManaChanged.Invoke(Mana);
     }
 
     public void IsAlive()
@@ -161,25 +241,98 @@ public partial class Character : Node2D
         }
     }
 
-    public void OnEnemyClick(InputEvent ev)
+    public void OnClick2(InputEvent ev)
+    {
+        var btn = ev as InputEventMouseButton;
+        if (((btn != null) && ((int)MouseButton.Left == 1)))
+        {
+            GD.Print("GG");
+        }
+    }
+
+    public void OnClick(InputEvent ev)
     {
         var btn = ev as InputEventMouseButton;
         if (((btn != null) && ((int)MouseButton.Left == 1)) && _control.Turn)
         {
-            AbilityStats statsTaken = _control.GetAbilityStats();
-            TakeDamage((float)statsTaken.Damage);
-            _control.EndTurn();
+            Ability statsTaken = _control.GetAbility();
+
+            if (statsTaken == null) 
+            {
+                return;
+            }
+            switch (statsTaken.Type)
+            {
+                case ("Atk"):
+                    AtkInput(statsTaken);
+                    break;
+                case ("Heal"):
+                    HealInput(statsTaken);
+                    break;
+                case ("BuffDebuff"):
+                    BuffDebuffInput(statsTaken);
+                    break;
+                default:
+                    _control.EndTurn();
+                    break;
+            }
+
         }
+    }
+
+    public void AtkInput(Ability statsTaken)
+    {
+        statsTaken.CharSource.ManaChange(-statsTaken.ManaCost);
+        for (int i = 0; i < statsTaken.CountActions; i++)
+        {
+            TakeDamage((float)statsTaken.Damage);
+        }
+        _control.EndTurn();
+    }
+
+    public void HealInput(Ability statsTaken)
+    {
+        statsTaken.CharSource.ManaChange(-statsTaken.ManaCost);
+        for (int i = 0; i < statsTaken.CountActions; i++)
+        {
+            TakeHeal((float)statsTaken.Heal);
+        }
+        _control.EndTurn();
+    }
+
+    public void BuffDebuffInput(Ability statsTaken)
+    {
+        _control.EndTurn();
+    }
+
+    public void CharacterInput(Ability statsTaken)
+    {
+
+    }
+
+    public void MobInput(Ability statsTaken)
+    {
+        
+    }
+
+    public void SelfInput(Ability statsTaken)
+    {
+        
+    }
+
+    public void AnyInput(Ability statsTaken)
+    {
+
     }
 
     public void OnPaladinInputEvent(Viewport viewport, InputEvent ev, int shape_idx)
     {
-        OnEnemyClick(ev);
+        OnClick(ev);
     }
 
     public void OnSlimeInputEvent(Viewport viewport, InputEvent ev, int shape_idx)
     {
-        OnEnemyClick(ev);
+        OnClick(ev);
     }
 
     public void OnMouseEnter()

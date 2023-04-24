@@ -11,6 +11,8 @@ public partial class ButtonAbility : Button
     private Control _control;
     private Character _whoseTurn;
 
+    private string _path = "res://characters/unique/";
+
     public override void _Ready()
 	{
         _control = GetNode<Control>("../../Control");
@@ -30,6 +32,28 @@ public partial class ButtonAbility : Button
     {
         _whoseTurn = null;
         TypeTurn = "";
+    }
+
+    public void SetSkin(string nameClass, string abilityName)
+    {
+        switch (Type)
+        {
+            case "NormalAtk":
+                Icon = (Texture2D)ResourceLoader.Load(_path + nameClass + "/" + abilityName + ".png");
+                break;
+            case "Ability1":
+                Icon = (Texture2D)ResourceLoader.Load(_path + nameClass + "/" + abilityName + ".png");
+                break;
+            case "Ability2":
+                Icon = (Texture2D)ResourceLoader.Load(_path + nameClass + "/" + abilityName + ".png");
+                break;
+            case "Ability3":
+                Icon = (Texture2D)ResourceLoader.Load(_path + nameClass + "/" + abilityName + ".png");
+                break;
+            case "Ability4":
+                Icon = (Texture2D)ResourceLoader.Load(_path + nameClass + "/" + abilityName + ".png");
+                break;
+        }
     }
 
 
@@ -60,26 +84,26 @@ public partial class ButtonAbility : Button
 
 	public void NormalAtk() 
 	{
-        _control.SetAbilityStats(_whoseTurn.NormalAtk());
+        _control.SetAbility(_whoseTurn.NormalAtk());
     }
 
     public void Ability1()
     {
-
+        _control.SetAbility(_whoseTurn.Ability1());
     }
 
     public void Ability2()
     {
-
+        _control.SetAbility(_whoseTurn.Ability2());
     }
 
     public void Ability3()
     {
-
+        _control.SetAbility(_whoseTurn.Ability3());
     }
 
     public void Ability4()
     {
-
+        _control.SetAbility(_whoseTurn.Ability4());
     }
 }

@@ -39,7 +39,7 @@ public partial class Character : Node2D
     private static readonly string[] POSIBLE_TYPES = { "Character", "Mob", "Npc" };
 
     [Export] public string NameClass { get; set; } = "";
-    private static readonly string[] POSIBLE_NAMES = { "Paladin", "Slime"};
+    private static readonly string[] POSIBLE_NAMES = { "Paladin", "Slime", "Warrior"};
 
     private string[] _charUiNames = { "Hp", "HpBase", "Init", "InitBase", "ArmorText" };
 

@@ -1,10 +1,12 @@
-[gd_scene load_steps=31 format=3 uid="uid://daroc00a100d"]
+[gd_scene load_steps=35 format=3 uid="uid://daroc00a100d"]
 
 [ext_resource type="Texture2D" uid="uid://bjs1153r1x8lw" path="res://characters/unique/paladin/paladin3.png" id="1_1iyub"]
 [ext_resource type="Script" path="res://characters/Character.cs" id="1_l3u1w"]
 [ext_resource type="Script" path="res://characters/unique/paladin/Paladin.cs" id="2_7usxx"]
 [ext_resource type="Shader" path="res://characters/ui/outline.gdshader" id="3_6m5bc"]
 [ext_resource type="Script" path="res://characters/AnimatedSprite2D.cs" id="4_i1r4k"]
+[ext_resource type="Texture2D" uid="uid://22724ml1b06x" path="res://characters/unique/Warrior/Warrior.png" id="6_cl30b"]
+[ext_resource type="Script" path="res://characters/Warrior.cs" id="6_ltdun"]
 [ext_resource type="Script" path="res://characters/unique/Slime/Slime.cs" id="6_wbj43"]
 [ext_resource type="Texture2D" uid="uid://xamlyksp156x" path="res://characters/unique/Slime/Slime.png" id="7_ho1ge"]
 [ext_resource type="PackedScene" uid="uid://b6xhigigtyfvd" path="res://characters/ui/hp_base.tscn" id="8_kb2av"]
@@ -42,6 +44,20 @@ animations = [{
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_26a0s"]
 size = Vector2(2750, 3070)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_opvku"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("6_cl30b")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_40a74"]
+size = Vector2(2552.94, 2552.94)
 
 [sub_resource type="Shader" id="Shader_0aqpk"]
 code = "shader_type canvas_item;
@@ -116,6 +132,22 @@ position = Vector2(-0.5, -0.5)
 scale = Vector2(0.1, 0.1)
 shape = SubResource("RectangleShape2D_26a0s")
 
+[node name="Warrior" type="Area2D" parent="."]
+visible = false
+script = ExtResource("6_ltdun")
+metadata/_edit_group_ = true
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="Warrior"]
+material = SubResource("ShaderMaterial_f6c0u")
+scale = Vector2(0.09, 0.09)
+sprite_frames = SubResource("SpriteFrames_opvku")
+script = ExtResource("4_i1r4k")
+
+[node name="CollisionPaladin" type="CollisionShape2D" parent="Warrior"]
+position = Vector2(0.58823, 0.588232)
+scale = Vector2(0.1, 0.1)
+shape = SubResource("RectangleShape2D_40a74")
+
 [node name="Slime" type="Area2D" parent="."]
 visible = false
 script = ExtResource("6_wbj43")
@@ -132,34 +164,34 @@ shape = SubResource("RectangleShape2D_iykpw")
 
 [node name="ManaBase" type="Sprite2D" parent="."]
 modulate = Color(0.0666667, 0.27451, 0.521569, 1)
-position = Vector2(135, 156)
+position = Vector2(280, 23.5294)
 scale = Vector2(200, 16)
 texture = ExtResource("8_puvxr")
 script = ExtResource("9_mps4m")
 
 [node name="Mana" type="Sprite2D" parent="."]
 modulate = Color(0.0941176, 0.419608, 0.65098, 1)
-position = Vector2(146, 118)
+position = Vector2(187.059, 16.4706)
 scale = Vector2(200, 16)
 texture = ExtResource("8_puvxr")
 centered = false
 script = ExtResource("11_amqcw")
 
 [node name="HpBase" parent="." instance=ExtResource("8_kb2av")]
-position = Vector2(130, -53)
+position = Vector2(291.765, 14.1177)
 scale = Vector2(200, 16)
 
 [node name="Hp" parent="." instance=ExtResource("9_85r5b")]
 modulate = Color(0.133333, 0.521569, 0.243137, 1)
-position = Vector2(26, -6.00002)
+position = Vector2(205.882, 7.05883)
 scale = Vector2(200, 16)
 
 [node name="InitBase" parent="." instance=ExtResource("10_f8ihi")]
-position = Vector2(297, -30)
+position = Vector2(284.706, 9.41176)
 scale = Vector2(200, 16)
 
 [node name="Init" parent="." instance=ExtResource("11_fcnsn")]
-position = Vector2(32, -109)
+position = Vector2(184.706, -3.5294)
 scale = Vector2(200, 16)
 
 [node name="ArmorText" parent="." instance=ExtResource("12_2aaxl")]
@@ -172,20 +204,20 @@ text = "10
 horizontal_alignment = 1
 
 [node name="ManaText" parent="." instance=ExtResource("12_2aaxl")]
-offset_left = 0.0
-offset_top = 0.0
-offset_right = 100.0
-offset_bottom = 30.0
+offset_left = 187.059
+offset_top = 37.6471
+offset_right = 287.059
+offset_bottom = 67.6471
 text = "100/100
 "
 horizontal_alignment = 1
 script = ExtResource("15_mmsl4")
 
 [node name="HpText" parent="." instance=ExtResource("12_2aaxl")]
-offset_left = 331.0
-offset_top = 68.0
-offset_right = 431.0
-offset_bottom = 98.0
+offset_left = 282.353
+offset_top = 37.647
+offset_right = 382.353
+offset_bottom = 67.647
 text = "100/100
 "
 horizontal_alignment = 1
@@ -212,6 +244,9 @@ script = ExtResource("23_46npi")
 [connection signal="input_event" from="Paladin" to="." method="OnPaladinInputEvent"]
 [connection signal="mouse_entered" from="Paladin" to="." method="OnPaladinMouseEntered"]
 [connection signal="mouse_exited" from="Paladin" to="." method="OnPaladinMouseExited"]
+[connection signal="input_event" from="Warrior" to="." method="OnPaladinInputEvent"]
+[connection signal="mouse_entered" from="Warrior" to="." method="OnPaladinMouseEntered"]
+[connection signal="mouse_exited" from="Warrior" to="." method="OnPaladinMouseExited"]
 [connection signal="input_event" from="Slime" to="." method="OnSlimeInputEvent"]
 [connection signal="mouse_entered" from="Slime" to="." method="OnSlimeMouseEntered"]
 [connection signal="mouse_exited" from="Slime" to="." method="OnSlimeMouseExited"]

@@ -74,6 +74,7 @@ public partial class Control : Node
     public void StartTurn(Character character)
     {
         WhoseTurn = character;
+        WhoseTurn.StartTurn();
 
         SetButtonsSkin(WhoseTurn);
 

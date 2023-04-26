@@ -62,8 +62,9 @@ position = Vector2(172, 702)
 PositionMarker = 2
 Hp = 100.0
 Armor = 5.0
+HaveMana = false
 Type = "Character"
-NameClass = "Paladin"
+NameClass = "Warrior"
 
 [node name="Character6" parent="ConteinerOfChars" instance=ExtResource("2_4ed7o")]
 position = Vector2(172, 702)

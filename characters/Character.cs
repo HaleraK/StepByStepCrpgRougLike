@@ -64,11 +64,13 @@ public partial class Character : Node2D
     public Action<float> DamageTaken { get; set; }
     public Action<float> InitChanged { get; set; }
     public Action<float> ManaChanged { get; set; }
+    public Action<float> ArmorChanged { get; set; }
     public Action<Character> InitChangedTo100 { get; set; }
 
 
     public override void _Ready()
     {
+        DeleteUnusedClases();
         _uiController = GetNode<UIController>("UIController");
         _control = GetNode<Control>("../../Control");
 
@@ -79,6 +81,17 @@ public partial class Character : Node2D
         InitiativeCounter(delta);
         SetOutlineMode((float)delta);
         IsAlive();
+    }
+
+    public void DeleteUnusedClases()
+    {
+        foreach (var nameClass in POSIBLE_NAMES)
+        {
+            if (nameClass != NameClass)
+            {
+                GetNode(nameClass).QueueFree();
+            }
+        }
     }
 
     public void InitiativeCounter(double delta)
@@ -106,17 +119,25 @@ public partial class Character : Node2D
         PauseForAction = false;
     }
 
-    public void EndTurn()
+    public void StartTurn()
     {
         IsAlive();
         RestorManaPerTurn();
         RestorHpPerTurn();
-        SetInitTo0();
 
         var charClass = GetNode(NameClass);
-        charClass.Call("ecrementCoolDowns");
+        charClass.Call("DecrementCoolDowns");
+        charClass.Call("DecrementBuffDeburrCountTurns");
+
+        ArmorChanged.Invoke(Armor);
     }
 
+    public void EndTurn()
+    {
+        IsAlive();
+        SetInitTo0();
+
+    }
 
     public void RestorManaPerTurn()
     {
@@ -153,31 +174,37 @@ public partial class Character : Node2D
     public Ability Ability1()
     {
         var charClass = GetNode(NameClass);
-        Ability stats = (Ability)charClass.Call("Ability1");
+        Ability stats = (Ability)charClass.Call("Ability",0);
         return stats;
     }
 
     public Ability Ability2()
     {
         var charClass = GetNode(NameClass);
-        Ability stats = (Ability)charClass.Call("Ability2");
+        Ability stats = (Ability)charClass.Call("Ability", 1);
         return stats;
     }
 
     public Ability Ability3()
     {
         var charClass = GetNode(NameClass);
-        Ability stats = (Ability)charClass.Call("Ability3");
+        Ability stats = (Ability)charClass.Call("Ability", 2);
         return stats;
     }
 
     public Ability Ability4()
     {
         var charClass = GetNode(NameClass);
-        Ability stats = (Ability)charClass.Call("Ability4");
+        Ability stats = (Ability)charClass.Call("Ability", 3);
         return stats;
     }
 
+
+    public void BuffDebuff(Ability ability)
+    {
+        BuffDebuffList.BuffDeBuffDetector.Invoke(ability.BuffDebuffA.NameBuff, ability.BuffDebuffA.Value, ability.CharSource);
+        ability.BuffDebuffA = new();
+    }
 
     // статы можно будет улучшать с помощью поинтов
     // можно улучшать hp mana armor atk initiative critRate critAtk
@@ -259,6 +286,10 @@ public partial class Character : Node2D
         {
             return;
         }
+
+        BuffDebuff(statsTaken);
+        ArmorChanged.Invoke(Armor);
+
         switch (statsTaken.Type)
         {
             case ("Atk"):

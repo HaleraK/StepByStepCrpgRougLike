@@ -1,6 +1,8 @@
 using Godot;
 using StepByStepCrpgRougLike.characters;
 using System;
+using System.Linq;
+using static Ability;
 using static Character;
 using static Control;
 
@@ -10,6 +12,7 @@ public partial class Paladin : Area2D
 	private Character _character;
 	private Ability _ability;
     private Ability[] _abilitiesClass;
+    private string[] chosenAbilities = { "TripleAtk", "ManaAtk", "HealAlly", "SelfHeal" };
 
 
     public override void _Ready()
@@ -23,15 +26,25 @@ public partial class Paladin : Area2D
 	{
 	}
 
-	public void CreateAbilitiesClass()
+    public void CreateAbilitiesClass()
 	{
 		Array.Resize(ref _abilitiesClass, 5);
 
-		_abilitiesClass[0] = new Ability("NormalAtk");
+		_abilitiesClass[0] = new Ability("NormalAttack");
         _abilitiesClass[1] = new Ability("TripleAtk");
         _abilitiesClass[2] = new Ability("ManaAtk");
-        _abilitiesClass[3] = new Ability("NormalAtk");
+        _abilitiesClass[3] = new Ability("HealAlly");
         _abilitiesClass[4] = new Ability("SelfHeal");
+    }
+
+    public Ability CallAbilityByName(string name)
+    {
+        return (Ability)this.Call(name);
+    }
+
+    public Ability GetByNameAbility(string nameAbility)
+	{
+        return _abilitiesClass.Where(a => a.NameAbility == nameAbility).FirstOrDefault();
     }
 
 	public void DecrementCoolDowns()
@@ -44,38 +57,27 @@ public partial class Paladin : Area2D
 			} else
 			{
 				ability.OnCoolDown = false;
-
-
             }
 		}
 	}
+
+	public bool IsOnCoolDown(Ability ability)
+	{
+        if (ability.CoolDown > 0 && ability.OnCoolDown)
+        {
+            return true;
+        }
+		return false;
+    }
 
     public void TougleVisible()
 	{
 		Visible = !Visible;
 	}
 
-	public Ability Ability1()
-	{
-		return TripleAtk();
-
-    }
-
-    public Ability Ability2()
+    public Ability Ability(int n)
     {
-        return ManaAtk();
-
-    }
-
-    public Ability Ability3()
-    {
-        return TripleAtk();
-
-    }
-
-    public Ability Ability4()
-    {
-        return SelfHeal();
+        return CallAbilityByName(chosenAbilities[n]);
 
     }
 
@@ -90,11 +92,14 @@ public partial class Paladin : Area2D
     //обычная атака 100% атаки
     public Ability NormalAttack()
 	{
-		Ability stats = _abilitiesClass[0];
+		Ability stats = GetByNameAbility("NormalAttack");
+
         stats.Selected = true;
         stats.Type = "Atk";
         stats.TargetType = "Mob";
+		stats.SetPriorityOfTargets("Front");
         stats.CharSource = _character;
+
         stats.TargetCount = 1;
 		stats.CountActions = 1;
         stats.CoolDown = 0;
@@ -112,18 +117,20 @@ public partial class Paladin : Area2D
 	//откат 3 хода
 	public Ability TripleAtk()
 	{
-        Ability stats = _abilitiesClass[1];
+		Ability stats = GetByNameAbility("TripleAtk");
 
-        if (_abilitiesClass[1].CoolDown > 0 && _abilitiesClass[1].OnCoolDown)
+        if (IsOnCoolDown(GetByNameAbility("TripleAtk")))
 		{
 			return stats;
 		}
 
-		_abilitiesClass[1].CoolDown = 3;
+        GetByNameAbility("TripleAtk").CoolDown = 3;
         stats.Selected = true;
         stats.Type = "Atk";
         stats.TargetType = "Mob";
         stats.CharSource = _character;
+        stats.SetPriorityOfTargets("Front");
+
         stats.TargetCount = 1;
         stats.CountActions = 3;
 		stats.CoolDown = 3;
@@ -142,15 +149,23 @@ public partial class Paladin : Area2D
 	//мана 30%
 	public Ability ManaAtk()
 	{
-        Ability stats = _abilitiesClass[2];
+		Ability stats = GetByNameAbility("ManaAtk");
+        stats.ManaCost = 40;
+
+		if (_character.Mana < stats.ManaCost)
+		{
+            return stats;
+        }
+
         stats.Selected = true;
         stats.Type = "Atk";
         stats.TargetType = "Mob";
         stats.CharSource = _character;
+        stats.SetPriorityOfTargets("Any");
+
         stats.TargetCount = 1;
         stats.CountActions = 1;
         stats.CoolDown = 0;
-		stats.ManaCost = 40;
 
         float dammage = 0;
         dammage += _character.Atk;
@@ -174,10 +189,28 @@ public partial class Paladin : Area2D
 	//Лечение света
 	//хил любого союзника
 	//мана 20%
-	public void HealLight()
+	public Ability HealAlly()
 	{
+        Ability stats = GetByNameAbility("HealAlly");
+        stats.Selected = true;
+        stats.Type = "Heal";
+        stats.TargetType = "Character";
+        stats.CharSource = _character;
+        stats.SetPriorityOfTargets("Any");
 
-	}
+        stats.TargetCount = 1;
+        stats.CountActions = 1;
+        stats.CoolDown = 0;
+        stats.ManaCost = 60;
+
+        float heal = 0;
+        heal += _character.Atk;
+        heal *= (float)2;
+
+        stats.Heal = heal;
+
+        return stats;
+    }
 
 	//Стойкость духа
 	//массовое лечение
@@ -193,11 +226,12 @@ public partial class Paladin : Area2D
 	//откат 4 хода
 	public Ability SelfHeal()
 	{
-        Ability stats = _abilitiesClass[4];
+		Ability stats = GetByNameAbility("SelfHeal");
         stats.Selected = true;
         stats.Type = "Heal";
         stats.TargetType = "Self";
         stats.CharSource = _character;
+
         stats.TargetCount = 1;
         stats.CountActions = 1;
         stats.CoolDown = 0;

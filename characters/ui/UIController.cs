@@ -21,6 +21,7 @@ public partial class UIController : Node
         _character.DamageTaken += ChageHpBarLength;
         _character.InitChanged += ChageInitBarLength;
         _character.ManaChanged += ChageManaBarLength;
+        _character.ArmorChanged += ChageArmorText;
 
         _initBarBase = GetNode<InitBase>("../InitBase");
         _initBar = GetNode<Init>("../Init");
@@ -83,6 +84,11 @@ public partial class UIController : Node
     {
         _manaBar.SetSizeX();
         _manaText.SetText();
+    }
+    public void ChageArmorText(float armor)
+    {
+        _armorText.SetText();
+        GD.Print(_character.Armor);
     }
 
 }
